@@ -12,6 +12,18 @@
         just tell me more about your self.
     </p>
     <p>Press the button to get started</p>
-    <button type="button">Click Me!</button>
+    <p><input/></p>
+    <button onclick="myFunction()" type="button">Submit!</button>
+
+    <script>
+        function myFunction() {
+            var p2 = document.createElement("P");
+            p2.innerText = "THE BEE MOVIE";
+            document.body.appendChild(p2);
+            return false;
+        }
+    </script>
+
+
 </body>
 </html>
