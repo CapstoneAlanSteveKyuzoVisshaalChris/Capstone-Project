@@ -1,4 +1,7 @@
 Try adding your name to this file and pushing, so we know the repository is working!
 
+-Alan
+-Chris
 -Kyuzo
 -Visshaal
+-Steve
