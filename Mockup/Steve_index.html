@@ -24,8 +24,15 @@
     </div>
   </div>
   <div class="app-main">
-    <div class="chat-wrapper">
-
+    <div id = "chat-wrapper" class="chat-wrapper">
+        <div class="message-wrapper">
+        <div class="message-box-wrapper">
+          <div class="message-box">
+            Welcome! I am Recommend-Man
+          </div>
+          <span>Just now</span>
+        </div>
+      </div>
     </div>
     <div class="chat-input-wrapper">
       <button class="chat-attachment-btn">
@@ -35,7 +42,7 @@
         </svg>
       </button>
       <div class="input-wrapper">
-        <input type="text" class="chat-input" placeholder="Enter your message here">
+        <input id = "chat-input" type="text" class="chat-input" placeholder="Enter your message here">
         <button class="emoji-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-smile" viewBox="0 0 24 24">
           <defs/>
@@ -44,7 +51,7 @@
         </svg>
       </button>
       </div>
-      <button class="chat-send-btn">Send</button>
+      <button class="chat-send-btn" onclick="next()">Send</button>
     </div>
   </div>
 </div>
