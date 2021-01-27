@@ -1,0 +1,3 @@
+C:\Users\Kyuzo\source\repos\Capstone-Project\Mockup\obj\Debug\Mockup.njsprojAssemblyReference.cache
+C:\Users\Kyuzo\source\repos\Capstone-Project\Mockup\obj\Debug\Mockup.njsproj.CoreCompileInputs.cache
+C:\Users\Kyuzo\source\repos\Capstone-Project\Mockup\bin\Microsoft.NodejsTools.WebRole.dll
