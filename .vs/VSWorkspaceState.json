@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Mockup"
+    "\\Mockup",
+    "\\Mockup\\js"
   ],
-  "SelectedNode": "\\Mockup\\server.js",
+  "SelectedNode": "\\Mockup\\js\\script.js",
   "PreviewInSolutionExplorer": false
 }
