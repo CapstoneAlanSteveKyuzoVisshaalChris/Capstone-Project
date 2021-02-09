@@ -5,7 +5,7 @@
   "main": "server.js",
   "author": {
     "name": ""
-  }
+  },
   "scripts": {
     "test": "script.js"
   }
