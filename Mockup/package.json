@@ -6,4 +6,7 @@
   "author": {
     "name": ""
   }
+  "scripts": {
+    "test": "jshint server.js"
+  }
 }
