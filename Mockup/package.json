@@ -7,6 +7,6 @@
     "name": ""
   }
   "scripts": {
-    "test": "jshint server.js"
+    "test": "script.js"
   }
 }
