@@ -21,7 +21,7 @@ function next(){
             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper reverse"><div class="message-box-wrapper"><div class="message-box">I want to watch another movie.</div><span>Just now</span></div></div>';
             break;
         case 5:
-            break;
+            break
         case 6:
             break;
         case 7:
