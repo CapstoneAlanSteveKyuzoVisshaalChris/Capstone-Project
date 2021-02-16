@@ -1,4 +1,4 @@
-var i = 0
+var i = 0;
 function next(){
     switch(i){
         case 0:
@@ -21,12 +21,12 @@ function next(){
             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper reverse"><div class="message-box-wrapper"><div class="message-box">I want to watch another movie.</div><span>Just now</span></div></div>';
             break;
         case 5:
-            break
+            break;
         case 6:
             break;
         case 7:
             break;
     }
     i+=1;
-    document.getElementById("chat-input").value = ""
+    document.getElementById("chat-input").value = "";
 }
