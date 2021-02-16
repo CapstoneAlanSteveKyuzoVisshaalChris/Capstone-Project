@@ -79,20 +79,23 @@ class Tmdb:
 
 
     def simpleSearch(self,keyword):
+        keyWordID = "";
+        for y in keyword:
+            key = self.searchKeyword(y)
+            res = key['results']
+            id = 0
+            for x in res:
+                #compare case insensitive
+                if x['name'].casefold() == y.casefold():
+                    id = x['id']
+                    print(id)
+                    keyWordID += str(id) + ","
 
-        key = self.searchKeyword(keyword)
-        res = key['results']
-        id = 0
-        for x in res:
-            #compare case insensitive
-            if x['name'].casefold() == keyword.casefold():
-                id = x['id']
-                break
-        movieList = self.discover(str(id))
+            movieList = self.discover(keyWordID)
 
         return movieList['results'][0]['title']
 
 
 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-keyword = keywords[0]
+keyword = keywords
 print(test.simpleSearch(keyword))
