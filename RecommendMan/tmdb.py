@@ -1,5 +1,57 @@
 import requests
 import json
+
+from ibm_watson import AssistantV2
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
+assistant = AssistantV2(
+    version='2020-09-26',
+    authenticator=authenticator
+)
+assistant.set_service_url('https://api.us-south.assistant.watson.cloud.ibm.com')
+ass_id = '2120d4b4-5d21-4880-981c-245436c7e12f'
+
+response = assistant.create_session(
+    assistant_id=ass_id
+).get_result()
+
+sess_id=  response["session_id"]
+
+response = assistant.message(
+    assistant_id=ass_id,
+    session_id=sess_id,
+    input={
+        'message_type': 'text',
+        'text': 'crime movie with cool car chase and nice soundtrack'
+    }
+).get_result()
+
+json_str = json.dumps(response, indent=2)
+#SIZE
+size = len(response["output"]["entities"])
+print(size)
+print(response["output"]["entities"])
+#GENRE
+genre = response["output"]["entities"][0]["value"]
+#KEYWORD
+keywords = []
+i = 1
+while (i < size):
+    print(i)
+    keywords.append(response["output"]["entities"][i]["value"])
+    i+=1
+print(keywords)
+
+
+
+response = assistant.delete_session(
+    assistant_id=ass_id,
+    session_id=sess_id
+).get_result()
+
+
+
 class Tmdb:
     def __init__(self,key):
         self.key = key
@@ -42,4 +94,5 @@ class Tmdb:
 
 
 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-print(test.simpleSearch("trash"))
+keyword = keywords[0]
+print(test.simpleSearch(keyword))
