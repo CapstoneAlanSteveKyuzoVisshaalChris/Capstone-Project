@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\Mockup",
-    "\\Mockup\\js"
+    "\\RecommendMan"
   ],
-  "SelectedNode": "\\Mockup\\js\\script.js",
+  "SelectedNode": "\\RecommendMan\\tmdb.py",
   "PreviewInSolutionExplorer": false
 }
