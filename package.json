@@ -1,0 +1,19 @@
+{
+  "name": "mockup",
+  "version": "0.0.0",
+  "description": "Mockup",
+  "main": "server.js",
+  "author": {
+    "name": "Kyuzo Kelly",
+    "name": "Visshaal Suresh",
+    "name": "Chris Shrake",
+    "name": "Steve Zhu",
+    "name": "Alan Contreras"
+  },
+  "devDependencies": {
+    "jshint": "^2.6.0"
+  },
+  "scripts": {
+    "test": "jshint RecommendMan/js/script.js"
+  }
+}

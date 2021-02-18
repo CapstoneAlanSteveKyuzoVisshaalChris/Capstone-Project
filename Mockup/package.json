@@ -5,8 +5,11 @@
   "main": "server.js",
   "author": {
     "name": ""
-  }
+  },
+  "devDependencies": {
+    "jshint": "^2.6.0"
+  },
   "scripts": {
-    "test": "jshint server.js"
+    "test": "jshint script.js"
   }
 }

@@ -1,9 +1,0 @@
-{
-  "name": "mockup",
-  "version": "0.0.0",
-  "description": "Mockup",
-  "main": "server.js",
-  "author": {
-    "name": ""
-  }
-}
