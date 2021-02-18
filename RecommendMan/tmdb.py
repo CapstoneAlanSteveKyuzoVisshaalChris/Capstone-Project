@@ -78,6 +78,7 @@ class Tmdb:
         return requests.get(search).json()
 
 
+
     def simpleSearch(self,keyword):
         keyWordID = "";
         for y in keyword:
