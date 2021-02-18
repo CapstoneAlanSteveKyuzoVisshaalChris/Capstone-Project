@@ -95,7 +95,7 @@ def tmdb(inputValue):
             if ' ' in keywordID:
                 keywordID.replace(' ','%2C')
             search = url + genreID
-            search = search + "&with_keywords=" + keywordID
+            search = search + "&with_keywords=" + keywordID + "&without_keywords=9663" #remove sequels
             return requests.get(search).json()
 
         def simpleSearch(self,genre,keyword):
@@ -124,4 +124,4 @@ def tmdb(inputValue):
     test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
     keyword = keywords
     output = test.simpleSearch(genre, keyword)
-    return output
+    return ("test")
