@@ -124,4 +124,4 @@ def tmdb(inputValue):
     test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
     keyword = keywords
     output = test.simpleSearch(genre, keyword)
-    return ("test")
+    return (output)
