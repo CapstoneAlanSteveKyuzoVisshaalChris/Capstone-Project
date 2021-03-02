@@ -31,6 +31,28 @@ def tmdb(inputValue):
         }
     ).get_result()
 
+    ass_response = response["output"]["generic"][0]["text"]
+    #response codes:
+    #1: will return movie
+    #2: no keywords found
+    #3: no genre/did not understand
+
+
+    if (ass_response == "2"):
+        response = assistant.delete_session(
+        assistant_id=ass_id,
+        session_id=sess_id
+        ).get_result()
+        return ("Please include some keywords to narrow the search.")
+    elif (ass_response == "3"):
+        response = assistant.delete_session(
+        assistant_id=ass_id,
+        session_id=sess_id
+        ).get_result()
+        return ("You need a genre and some keywords to search.")
+    
+
+
     json_str = json.dumps(response, indent=2)
     # SIZE
     size = len(response["output"]["entities"])
@@ -49,7 +71,14 @@ def tmdb(inputValue):
         if word.get("entity")=="keywords":
            keywords.append(word.get("value"))
 
-    # print(keywords)
+    #TIME
+    time = ""
+    for word in response["output"]["entities"]:
+        if word.get("entity")=="times":
+               time = (word.get("value"))
+               break
+
+
 
     response = assistant.delete_session(
         assistant_id=ass_id,
@@ -90,6 +119,20 @@ def tmdb(inputValue):
             search = url + keyword
             return requests.get(search).json()
 
+        def parseTimes(self, movieList, time):
+            list = []
+            if (movieList.get("total_results")!=0):
+                list = movieList['results']
+                temp = []
+                while list:
+                    mv = list.pop()
+                    release = mv["release_date"][0:4]
+                    if (((time == "new") and (int(release) > 2010)) or ((time == "old") and (int(release) < 1985)) or (time == "")):
+                            temp.append(mv)
+                while temp:
+                    list.append(temp.pop())
+            return list
+
         def discover(self,genreID,keywordID):
             url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres='
             if ' ' in keywordID:
@@ -116,12 +159,14 @@ def tmdb(inputValue):
                         keyWordID += str(id) + ","
 
             movieList = self.discover(genreID,keyWordID)
+            list = self.parseTimes(movieList, time)
             if (movieList.get("total_results")!=0):
-                title = movieList['results'][0]['title']
+                if (len(list) > 0):
+                    title = list[0]['title']
 
             return title
 
     test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
     keyword = keywords
     output = test.simpleSearch(genre, keyword)
-    return (output)
+    return output
