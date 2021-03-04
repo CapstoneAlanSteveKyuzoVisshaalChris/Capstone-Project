@@ -4,6 +4,11 @@ import json
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
+likesActor = []
+dislikesActor = []
+likesGenre = []
+dislikesGenre = []
+
 authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
 assistant = AssistantV2(
     version='2020-09-26',
@@ -17,7 +22,6 @@ response = assistant.create_session(
 ).get_result()
 
 #print(response)
-
 
 sess_id=  response["session_id"]
 
@@ -52,10 +56,51 @@ while (output != "SEARCH"):
            print("Sorry, looks like your wording was too fuzzy. Please rephrase.")
         else: 
             output = r["text"]
-            print(output)
+            #print(output)
             if output == "SEARCH":
                 break;
-    
+            elif output == "ACTORLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="actornames":
+                        print("YOU LIKE: ", word.get("value"))
+                        likesActor.append(word.get("value"))
+                        if word.get("value") in dislikesActor:
+                            dislikesActor.remove(word.get("value"))
+            elif output == "ACTORDISLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="actornames":
+                        print("YOU DISLIKE: ", word.get("value"))
+                        dislikesActor.append(word.get("value"))
+                        if word.get("value") in likesActor:
+                            likesActor.remove(word.get("value"))
+            elif output == "GENRELIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="genre":
+                        print("YOU LIKE: ", word.get("value"))
+                        likesGenre.append(word.get("value"))
+                        if word.get("value") in dislikesGenre:
+                            dislikesGenre.remove(word.get("value"))
+            elif output == "GENREDISLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="genre":
+                        print("YOU DISLIKE: ", word.get("value"))
+                        dislikesGenre.append(word.get("value"))
+                        if word.get("value") in likesGenre:
+                            likesGenre.remove(word.get("value"))
+            elif output == "ACTORLIST":
+                print("YOU LIKE: ", likesActor)
+                print("YOU DISLIKE: ", dislikesActor)
+            elif output == "GENRELIST":
+                print("YOU LIKE: ", likesGenre)
+                print("YOU DISLIKE: ", dislikesGenre)
+            elif output == "GENREALL":
+                print("ACTION, ADVENTURE, COMEDY, CRIME")
+                print("DRAMA, FAMILY, FANTASY, HISTORY")
+                print("HORROR, MUSIC, MYSTERY, ROMANCE")
+                print("SCI-FI, THRILLER, WAR, WESTERN")
+            else:
+                print(output)
+                
 
 
 
