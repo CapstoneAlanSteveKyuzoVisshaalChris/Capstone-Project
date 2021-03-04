@@ -16,16 +16,48 @@ response = assistant.create_session(
     assistant_id=ass_id
 ).get_result()
 
+#print(response)
+
+
 sess_id=  response["session_id"]
 
 response = assistant.message(
     assistant_id=ass_id,
     session_id=sess_id,
     input={
-        'message_type': 'text',
-        'text': 'a new crime with car chase'
+        #'message_type': 'text',
+        #'text': 'i want a tutorial'
     }
 ).get_result()
+
+#print(response)
+
+print(response["output"]["generic"][0]["text"])
+#usertext = input("YOUR INPUT HERE: ")
+output = response["output"]["generic"][0]["text"]
+
+while (output != "SEARCH"):
+    usertext = input("YOUR INPUT HERE: ")
+    response = assistant.message(
+        assistant_id=ass_id,
+        session_id=sess_id,
+        input={
+            'message_type': 'text',
+            'text': usertext
+        }
+    ).get_result()
+    #print (response)
+    for r in response["output"]["generic"]:
+        if (r["response_type"]=="suggestion"):
+           print("Sorry, looks like your wording was too fuzzy. Please rephrase.")
+        else: 
+            output = r["text"]
+            print(output)
+            if output == "SEARCH":
+                break;
+    
+
+
 
 ass_response = response["output"]["generic"][0]["text"]
 #response codes:
@@ -141,6 +173,7 @@ class Tmdb:
                     keyWordID += str(id) + ","
 
         movieList = self.discover(genreID,keyWordID)
+        #print(movieList)
         list = self.parseTimes(movieList, time)
         if (movieList.get("total_results")!=0):
             if (len(list) > 0):
