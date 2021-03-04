@@ -101,6 +101,15 @@ class Tmdb:
         search = url + keyword
         return requests.get(search).json()
 
+    #gets person name from tmdb using search func and return the json output
+    def searchPerson(self, person):
+        url = 'https://api.themoviedb.org/3/search/people?api_key=' + self.key + '&query='
+        if ' ' in person:
+            person.replace(' ','%20')
+        search = url + person
+        return requests.get(search).json()
+
+
     def parseTimes(self, movieList, time):
         list = []
         if (movieList.get("total_results")!=0):
@@ -115,15 +124,17 @@ class Tmdb:
                 list.append(temp.pop())
         return list
     
-    def discover(self,genreID,keywordID):
-        url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres='
+    def discover(self,genreID,keywordID,personID):
+        url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_people='
         if ' ' in keywordID:
             keywordID.replace(' ','%2C')
-        search = url + genreID
+        #dont need to replace because there is only 1 person that we are searching for
+        search = url + personID
+        search = search + "&with_genres=" + genreID
         search = search + "&with_keywords=" + keywordID
         return requests.get(search).json()
 
-    def simpleSearch(self,genre,keyword):
+    def simpleSearch(self,genre,keyword,person):
         title="NO MOVIE FOUND"
         keyWordID = ""
         genreID=""
@@ -140,7 +151,12 @@ class Tmdb:
                     #print("keywordID: ", id)
                     keyWordID += str(id) + ","
 
-        movieList = self.discover(genreID,keyWordID)
+        personJson = self.searchKeyword(p)
+        personID = str(personJson["results"]["id"])
+        print(personID)
+        
+
+        movieList = self.discover(genreID,keyWordID,personID)
         list = self.parseTimes(movieList, time)
         if (movieList.get("total_results")!=0):
             if (len(list) > 0):
@@ -155,4 +171,5 @@ response = assistant.delete_session(
     ).get_result()
 
 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-print(test.simpleSearch(genre,keywords))
+person = "Will Smith"
+print(test.simpleSearch(genre,keywords,person))
