@@ -4,6 +4,11 @@ import json
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
+likesActor = []
+dislikesActor = []
+likesGenre = []
+dislikesGenre = []
+
 authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
 assistant = AssistantV2(
     version='2020-09-26',
@@ -16,30 +21,90 @@ response = assistant.create_session(
     assistant_id=ass_id
 ).get_result()
 
+#print(response)
+
 sess_id=  response["session_id"]
 
 response = assistant.message(
     assistant_id=ass_id,
     session_id=sess_id,
     input={
-        'message_type': 'text',
-        'text': 'a new crime with car chase'
+        #'message_type': 'text',
+        #'text': 'i want a tutorial'
     }
 ).get_result()
 
+#print(response)
+
+print(response["output"]["generic"][0]["text"])
+#usertext = input("YOUR INPUT HERE: ")
+output = response["output"]["generic"][0]["text"]
+
+while (output != "SEARCH"):
+    usertext = input("YOUR INPUT HERE: ")
+    response = assistant.message(
+        assistant_id=ass_id,
+        session_id=sess_id,
+        input={
+            'message_type': 'text',
+            'text': usertext
+        }
+    ).get_result()
+    #print (response)
+    for r in response["output"]["generic"]:
+        if (r["response_type"]=="suggestion"):
+           print("Sorry, looks like your wording was too fuzzy. Please rephrase.")
+        else: 
+            output = r["text"]
+            #print(output)
+            if output == "SEARCH":
+                break;
+            elif output == "ACTORLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="actornames":
+                        print("YOU LIKE: ", word.get("value"))
+                        likesActor.append(word.get("value"))
+                        if word.get("value") in dislikesActor:
+                            dislikesActor.remove(word.get("value"))
+            elif output == "ACTORDISLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="actornames":
+                        print("YOU DISLIKE: ", word.get("value"))
+                        dislikesActor.append(word.get("value"))
+                        if word.get("value") in likesActor:
+                            likesActor.remove(word.get("value"))
+            elif output == "GENRELIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="genre":
+                        print("YOU LIKE: ", word.get("value"))
+                        likesGenre.append(word.get("value"))
+                        if word.get("value") in dislikesGenre:
+                            dislikesGenre.remove(word.get("value"))
+            elif output == "GENREDISLIKE":
+                for word in response["output"]["entities"]:
+                   if word.get("entity")=="genre":
+                        print("YOU DISLIKE: ", word.get("value"))
+                        dislikesGenre.append(word.get("value"))
+                        if word.get("value") in likesGenre:
+                            likesGenre.remove(word.get("value"))
+            elif output == "ACTORLIST":
+                print("YOU LIKE: ", likesActor)
+                print("YOU DISLIKE: ", dislikesActor)
+            elif output == "GENRELIST":
+                print("YOU LIKE: ", likesGenre)
+                print("YOU DISLIKE: ", dislikesGenre)
+            elif output == "GENREALL":
+                print("ACTION, ADVENTURE, COMEDY, CRIME")
+                print("DRAMA, FAMILY, FANTASY, HISTORY")
+                print("HORROR, MUSIC, MYSTERY, ROMANCE")
+                print("SCI-FI, THRILLER, WAR, WESTERN")
+            else:
+                print(output)
+
+
 ass_response = response["output"]["generic"][0]["text"]
-#response codes:
-#1: will return movie
-#2: no keywords found
-#3: no genre/did not understand
-
 text = "Searching..."
-if (ass_response == "2"):
-    text = ("Please include some keywords to narrow the search.")
-elif (ass_response == "3"):
-    text = ("You need a genre and some keywords to search.")
 print(text)
-
 
 json_str = json.dumps(response, indent=2)
 #SIZE
@@ -64,7 +129,8 @@ for word in response["output"]["entities"]:
            time = (word.get("value"))
            break
 
-
+#print("gr: ", genre)
+#print("kw: ", keywords)
 
 
 class Tmdb:
@@ -161,7 +227,6 @@ class Tmdb:
         if (movieList.get("total_results")!=0):
             if (len(list) > 0):
                 title = list[0]['title']
-
         return title
     
 
