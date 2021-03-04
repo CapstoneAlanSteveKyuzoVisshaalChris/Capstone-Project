@@ -100,23 +100,11 @@ while (output != "SEARCH"):
                 print("SCI-FI, THRILLER, WAR, WESTERN")
             else:
                 print(output)
-                
-
 
 
 ass_response = response["output"]["generic"][0]["text"]
-#response codes:
-#1: will return movie
-#2: no keywords found
-#3: no genre/did not understand
-
 text = "Searching..."
-if (ass_response == "2"):
-    text = ("Please include some keywords to narrow the search.")
-elif (ass_response == "3"):
-    text = ("You need a genre and some keywords to search.")
 print(text)
-
 
 json_str = json.dumps(response, indent=2)
 #SIZE
@@ -141,7 +129,8 @@ for word in response["output"]["entities"]:
            time = (word.get("value"))
            break
 
-
+#print("gr: ", genre)
+#print("kw: ", keywords)
 
 
 class Tmdb:
@@ -223,7 +212,6 @@ class Tmdb:
         if (movieList.get("total_results")!=0):
             if (len(list) > 0):
                 title = list[0]['title']
-
         return title
     
 
