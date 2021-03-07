@@ -1,0 +1,3 @@
+"sudo docker-compose up" starts the server. 
+
+To terminate the server press Ctrl+C.
