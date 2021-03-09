@@ -7,12 +7,14 @@ app = Flask(__name__)
 # The secret ingredient is... how we store session data.
 app.secret_key = b'\xe1q\xf5\xd4\xa3=\xa8\xc0\x18\xf9\xb3G`\xe0"\xa2'
 
-"""CAUTION: PREFERENCES ARE ONLY DELETED HEN CLOSE OF SERVER!"""
+"""CAUTION: PREFERENCES ARE DELETED UPON SERVER SHUTDOWN"""
 prefs_saved = {} 
 
 # Main Page
 @app.route('/', methods=['POST'])
 def index():
+    return "True" if request.is_json else "False"
+    
     # 
     user = request.form['username'] 
     
