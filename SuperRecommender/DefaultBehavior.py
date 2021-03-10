@@ -13,26 +13,45 @@ prefs_saved = {}
 # Main Page
 @app.route('/', methods=['POST'])
 def index():
-    return "True" if request.is_json else "False"
+    # Check that JSON was received
+    if request.is_json == False:
+        return "Bad Request", 400
     
-    # 
-    user = request.form['username'] 
+    # "Log in" the user
+    user = request.json['username'] 
+
+    # "is Raw text input?"
+    raw = False
+    try:
+        raw = request.json['raw']
+    except Exception:
+        raw = True
+
+    # If raw, extract keyword updates
+    if raw:
+        #TODO: STILL IN BETA, WILL ADD FOR TB4
+        pass
     
     # Get list of new preferences
-    prefs_new = request.form['data'].split(", ")
+    prefs_new = request.json['pref_data']
 
     # Combine old and new preferences
     prefs_all = prefs_saved[user] + prefs_new if user in prefs_saved else prefs_new
 
-    # De-Duplicate prefs and remove conflicting prefs (i.e. "no Will Farrel" and "must have Will Farrel"
-    # New prefs take precedent.
+    # TODO: De-Duplicate prefs and remove conflicting prefs (i.e. "no Will Farrel" and "must have Will Farrel"
+    # TODO: New prefs take precedent
     pref_set = set(prefs_all)
     prefs_all = list(pref_set)
 
     # Update saved preferences
     prefs_saved[user] = prefs_all
 
-    return json.jsonify(username=user, data=prefs_saved[user])
+    # TODO: Neural Network ("Pseudo-Netflix problem")
+
+    # TODO: TMDB Search
+
+    return json.jsonify("The Bee Movie", "Elf", "50 Shades of Monday") 
+    # Henceforth, this will be the default "no matches" behavior
 
 # Error Handling
 @app.errorhandler(404)
