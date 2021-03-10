@@ -4,7 +4,10 @@ import json
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
-class Tmdb:
+
+def assistant(inputValue):
+    ###TMDB CLASS#########
+    class Tmdb:
         def __init__(self,key):
             self.key = key
 
@@ -84,69 +87,53 @@ class Tmdb:
                 if (len(list) > 0):
                     title = list[0]['title']
             return title
+    ######################
 
-likesActor = []
-dislikesActor = []
-likesGenre = []
-dislikesGenre = []
 
-authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
-assistant = AssistantV2(
-    version='2020-09-26',
-    authenticator=authenticator
-)
-assistant.set_service_url('https://api.us-south.assistant.watson.cloud.ibm.com')
-ass_id = '2120d4b4-5d21-4880-981c-245436c7e12f'
+    ###startup
+    authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
+    assistant = AssistantV2(
+        version='2020-09-26',
+        authenticator=authenticator
+    )
+    assistant.set_service_url('https://api.us-south.assistant.watson.cloud.ibm.com')
+    ass_id = '2120d4b4-5d21-4880-981c-245436c7e12f'
 
-#print(response)
+    #print(response)
+    startstate = 'eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
+    state = startstate
 
-i=0
-while(1):
-    if(i==0):
-        #response = assistant.message_stateless(
-        response = assistant.message_stateless(
-                    assistant_id=ass_id,
-                    #session_id=sess_id,
-                    input={
-                        #'message_type': 'text',
-                        #'text': 'return',
-                        'options': {
-                                'return_context': True
-                        }
-                    }#,
-                    #context={
-                    #    'skills': {
-                    #        'main skill': {
-                    #            "system": {
-                    #                    'state': state
-                    #            }
-                    #        }
-                    #    }
-                   #}
-                ).get_result()
-    else:        #response = assistant.message_stateless(
-        response = assistant.message_stateless(
-                    assistant_id=ass_id,
-                    #session_id=sess_id,
-                    input={
-                        'message_type': 'text',
-                        'text': usertext,
-                        'options': {
-                                'return_context': True
-                        }
-                    },
-                    context={
-                        'skills': {
-                            'main skill': {
-                                "system": {
-                                        'state': state
-                                }
+    likesActor = []
+    dislikesActor = []
+    likesGenre = []
+    dislikesGenre = []
+    ###
+
+    #if/else to see if startstate or not?
+
+    response = assistant.message_stateless(
+                assistant_id=ass_id,
+                input={
+                    'message_type': 'text',
+                    'text': inputValue,
+                    'options': {
+                            'return_context': True
+                    }
+                },
+                context={
+                    'skills': {
+                        'main skill': {
+                            "system": {
+                                    'state': state
                             }
                         }
-                   }
-                ).get_result()
+                    }
+                }
+            ).get_result()
     
     output = response["output"]["generic"]
+    print("OUTPUT: ", output)
+
     if output[0]["text"] == "SEARCH":
         json_str = json.dumps(response, indent=2)
         #SIZE
@@ -156,36 +143,37 @@ while(1):
         genre=""
         for word in response["output"]["entities"]:
             if word.get("entity")=="genre":
-                   genre = word.get("value")
-                   break
+                    genre = word.get("value")
+                    break
         #KEYWORD
         keywords = []
         for word in response["output"]["entities"]:
             if word.get("entity")=="keywords":
-                   keywords.append(word.get("value"))
+                    keywords.append(word.get("value"))
         #TIME
         time = ""
         for word in response["output"]["entities"]:
             if word.get("entity")=="times":
-                   time = (word.get("value"))
-                   break
+                    time = (word.get("value"))
+                    break
 
 
         test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-        print(test.simpleSearch(genre,keywords))
-        i=0
-        state='eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
-        print("THIS IS THE HOME NODE")
+        #print(test.simpleSearch(genre,keywords))
+        state=startstate
+        #print("THIS IS THE HOME NODE")
+        return(test.simpleSearch(genre,keywords))
     else:
         state = response["context"]["skills"]["main skill"]["system"]["state"]
         if output[0]["text"] == "ACTORLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="actornames":
-                    print("YOU LIKE: ", word.get("value"))
+                    #print("YOU LIKE: ", word.get("value"))
                     likesActor.append(word.get("value"))
-                    print("Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
+                    #print("Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in dislikesActor:
                         dislikesActor.remove(word.get("value"))
+                    return "ACTORLIKE"
         elif output[0]["text"] == "ACTORDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="actornames":
@@ -194,6 +182,7 @@ while(1):
                     dislikesActor.append(word.get("value"))
                     if word.get("value") in likesActor:
                         likesActor.remove(word.get("value"))
+                    return "ACTORDISLIKE"
         elif output[0]["text"] == "GENRELIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
@@ -202,6 +191,7 @@ while(1):
                     print("Tell me the genre name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in dislikesGenre:
                         dislikesGenre.remove(word.get("value"))
+                    return "GENRELIKE"
         elif output[0]["text"] == "GENREDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
@@ -210,22 +200,26 @@ while(1):
                     print("Tell me the genre and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in likesGenre:
                         likesGenre.remove(word.get("value"))
+                    return "GENREDISLIKE"
         elif output[0]["text"] == "ACTORLIST":
             print("YOU LIKE: ", likesActor)
             print("YOU DISLIKE: ", dislikesActor)
+            return "ACTORLIST"
         elif output[0]["text"] == "GENRELIST":
             print("YOU LIKE: ", likesGenre)
             print("YOU DISLIKE: ", dislikesGenre)
+            return "GENRELIST"
         elif output[0]["text"] == "GENREALL":
             print("ACTION, ADVENTURE, COMEDY, CRIME")
             print("DRAMA, FAMILY, FANTASY, HISTORY")
             print("HORROR, MUSIC, MYSTERY, ROMANCE")
             print("SCI-FI, THRILLER, WAR, WESTERN")
+            return "GENREALL"
         else:
+            #print(output)
             for resp in output:
                 print(resp["text"])
+            return (output[0]["text"])
 
-    
-    usertext = input("YOUR INPUT HERE: ")
+    #usertext = input("YOUR INPUT HERE: ")
     #print(state)
-    i+=1

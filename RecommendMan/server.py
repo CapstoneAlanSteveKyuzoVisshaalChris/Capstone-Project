@@ -4,6 +4,7 @@ import hashlib
 import base64
 import threading
 import tmdb
+import tmdb_testing
 
 
 def get_headers(data):
@@ -99,7 +100,7 @@ def handler_msg(conn):
 
             if data_recv[0:1] == b"\x81":
                 data_parse = parse_payload(data_recv)
-                output = tmdb.tmdb(data_parse)
+                output = tmdb_testing.assistant(data_parse)
                 # print(output)
             send_msg(c, bytes("{}".format(output), encoding="utf-8"))
 
