@@ -229,3 +229,4 @@ while(1):
     usertext = input("YOUR INPUT HERE: ")
     #print(state)
     i+=1
+
