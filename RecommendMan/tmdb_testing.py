@@ -259,7 +259,9 @@ def assistant(inputValue, storage):
             #print(test.simpleSearch(genre,keywords))
             state=statelist.searchState()
             #print("THIS IS THE HOME NODE")
-            return([test.advancedSearch(genre,keywords)[0]["title"] + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
+            title = test.advancedSearch(genre,keywords)[0]["title"]
+            storage.popRecommends()
+            return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
         else:
             state = response["context"]["skills"]["main skill"]["system"]["state"]
             if output[0]["text"] == "ACTORLIKE":
@@ -300,13 +302,16 @@ def assistant(inputValue, storage):
                 #print("SCI-FI, THRILLER, WAR, WESTERN")
                 return ["ACTION, ADVENTURE, COMEDY, CRIME, DRAMA, FAMILY, FANTASY, HISTORY, HORROR, MUSIC, MYSTERY, ROMANCE, SCI-FI, THRILLER, WAR, WESTERN; Do you want a list of genres, an example of keywords, or return?",state]
             else:
-                #print(output)
-                assmess = ""
+                responses = []
                 for resp in output:
-                    assmess = assmess + "  "+ resp["text"]
-                retpack[0] = (assmess)
+                    print(resp["text"])
+                    responses.append(resp["text"])
+                if len(responses) == 1:
+                    retpack[0] = responses[0]
+                else:
+                    retpack[0] = responses
                 retpack[1] = state
-                #print (state)
+                print(retpack[0])
                 return retpack
 
     elif state == "CONFIRM":
@@ -314,8 +319,9 @@ def assistant(inputValue, storage):
             return [("OK! Have fun watching " + storage.getRecommends()[0]["title"] + "! - Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"), statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:
+                title = storage.getRecommends()[0]["title"]
                 storage.popRecommends()
-                return [("How about this one: " + storage.getRecommends()[0]["title"] + " - [Y/N]"), "CONFIRM"]
+                return [("How about this one: " + title + " - [Y/N]"), "CONFIRM"]
             else:
                 return[("Sorry, there are no more movies that fit your query :( - Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"), statelist.startState()]
 
