@@ -302,13 +302,16 @@ def assistant(inputValue, storage):
                 #print("SCI-FI, THRILLER, WAR, WESTERN")
                 return ["ACTION, ADVENTURE, COMEDY, CRIME, DRAMA, FAMILY, FANTASY, HISTORY, HORROR, MUSIC, MYSTERY, ROMANCE, SCI-FI, THRILLER, WAR, WESTERN; Do you want a list of genres, an example of keywords, or return?",state]
             else:
-                #print(output)
-                assmess = ""
+                responses = []
                 for resp in output:
-                    assmess = assmess + "  "+ resp["text"]
-                retpack[0] = (assmess)
+                    print(resp["text"])
+                    responses.append(resp["text"])
+                if len(responses) == 1:
+                    retpack[0] = responses[0]
+                else:
+                    retpack[0] = responses
                 retpack[1] = state
-                #print (state)
+                print(retpack[0])
                 return retpack
 
     elif state == "CONFIRM":
