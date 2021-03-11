@@ -191,12 +191,12 @@ def assistant(inputValue, storage):
                     storage.addDislikesGenre(word["value"])
                     return ["You dislike "+word["value"]+"; tell me if you like/dislike another genre, type \"list\" to see a list of preferences, or \"return\" to go back.",state]
         elif output[0]["text"] == "ACTORLIST":
-            likeslist = storage.getLikesActor()
-            dislikeslist = storage.getDislikesActor()
+            likeslist = storage.printLikesActor()
+            dislikeslist = storage.printDislikesActor()
             return [likeslist+"  "+dislikeslist + " Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.",state]
         elif output[0]["text"] == "GENRELIST":
-            likeslist = storage.getLikesGenre()
-            dislikeslist = storage.getDislikesGenre()
+            likeslist = storage.printLikesGenre()
+            dislikeslist = storage.printDislikesGenre()
             return [likeslist+"  "+dislikeslist + " Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.",state]
         #elif output[0]["text"] == "RESET":
         #    storage.clearPrefs()

@@ -19,45 +19,57 @@ class Storage:
             self.dislikesActor.remove(actor)
         print(self.likesActor)
 
-    def getLikesActor(self):
+    def printLikesActor(self):
         list = "Likes: "
         for name in self.likesActor:
            list = list +" "+ name
            print
         return list
 
+    def getLikesActor(self):
+        return self.likesActor
+
     def addDislikesActor(self, actor):
         self.dislikesActor.append(actor)
         if (actor in self.likesActor):
             self.likesActor.remove(actor)
 
-    def getDislikesActor(self):
+    def printDislikesActor(self):
         list = "Dislikes: "
         for name in self.dislikesActor:
            list = list +" "+ name
         return list
+
+    def getDislikesActor(self):
+        return self.dislikesActor
 
     def addLikesGenre(self, genre):
         self.likesGenre.append(genre)
         if (actor in self.dislikesGenre):
             self.dislikesGenre.remove(actor)
 
-    def getLikesGenre(self):
+    def printLikesGenre(self):
         list = "Likes: "
         for name in self.likesGenre:
            list = list +" "+ name
         return list
+
+    def getLikesGenre(self):
+        return self.likesGenre
 
     def addDislikesGenre(self, genre):
         self.dislikesGenre.append(genre)
         if (actor in self.likesGenre):
             self.likesGenre.remove(actor)
 
-    def getDisLikesGenre(self):
+    def printDislikesGenre(self):
         list = "Dislikes: "
         for name in self.dislikesGenre:
            list = list +" "+ name
         return list
+
+    def getDislikesGenre(self):
+        return self.dislikesGenre
 
     def clearPrefs(self):
         self.likesActor.clear()
