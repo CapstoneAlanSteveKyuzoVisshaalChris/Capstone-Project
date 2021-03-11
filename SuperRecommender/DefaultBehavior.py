@@ -50,8 +50,14 @@ def index():
 
     # TODO: TMDB Search
 
-    return json.jsonify("The Bee Movie", "Elf", "50 Shades of Monday") 
-    # Henceforth, this will be the default "no matches" behavior
+    TMDB_results = []
+
+    #Return results if there are any, else return "No Results"
+    if len(TMDB_results) > 0:
+        return json.jsonify("??????") 
+    else:
+        return json.jsonify("No Results") 
+    
 
 # Error Handling
 @app.errorhandler(404)

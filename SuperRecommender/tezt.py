@@ -1,9 +1,13 @@
 import requests
 import json
 
+#Constants
+AI_URL = "http://127.0.0.1:5000/"
+HEADER = {"Content-Type": "application/json"}
+
 def default_tezt():
-    url = "http://127.0.0.1:5000/"
-    header = {"Content-Type": "application/json"}
+    url = AI_URL
+    header = HEADER
     data = json.dumps({
         "username": "Adam&Steve",
         "pref_data": [ "nature" ]
@@ -14,8 +18,8 @@ def default_tezt():
     return json_blob
 
 def unraw_tezt():
-    url = "http://127.0.0.1:5000/"
-    header = {"Content-Type": "application/json"}
+    url = AI_URL
+    header = HEADER
     data = json.dumps({
         "username": "Adam&Steve",
         "raw" : False,
@@ -27,10 +31,10 @@ def unraw_tezt():
     return json_blob
 
 def raw_tezt():
-    url = "http://127.0.0.1:5000/"
-    header = {"Content-Type": "application/json"}
+    url = AI_URL
+    header = HEADER
     data = json.dumps({
-        "username": "Adam&Steve",
+        "username": "Boxwell",
         "raw" : True,
         "pref_data": [ "nature", "flowers" ]
     })
