@@ -180,9 +180,8 @@ def assistant(inputValue, storage):
 
             return recommendList
         
-#test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-#print(test.advancedSearch(genre,keywords,likesActor))
-
+    #test = Tmdb("")
+    #print(test.advancedSearch(genre,keywords,likesActor))
 
 
     ###startup
