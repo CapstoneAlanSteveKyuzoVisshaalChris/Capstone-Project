@@ -169,7 +169,7 @@ class Tmdb:
 
     #gets person name from tmdb using search func and return the json output
     def searchPerson(self, person):
-        url = 'https://api.themoviedb.org/3/search/people?api_key=' + self.key + '&query='
+        url = 'https://api.themoviedb.org/3/search/person?api_key=' + self.key + '&query='
         if ' ' in person:
             person.replace(' ','%20')
         search = url + person
@@ -189,7 +189,7 @@ class Tmdb:
             while temp:
                 list.append(temp.pop())
         return list
-    
+    #discover function with all relevant searches that we need. In depth search discover
     def discover(self,genreID,keywordID,personID):
         url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_people='
         if ' ' in keywordID:
@@ -199,6 +199,15 @@ class Tmdb:
         search = search + "&with_genres=" + genreID
         search = search + "&with_keywords=" + keywordID
         return requests.get(search).json()
+
+    #discover with only keywords and genre needed
+    def simpleDiscover(self,genreID,keywordID):
+            url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres='
+            if ' ' in keywordID:
+                keywordID.replace(' ','%2C')
+            search = url + genreID
+            search = search + "&with_keywords=" + keywordID + "&without_keywords=9663" #remove sequels
+            return requests.get(search).json()
 
     def simpleSearch(self,genre,keyword,person):
         title="NO MOVIE FOUND"
@@ -217,9 +226,8 @@ class Tmdb:
                     #print("keywordID: ", id)
                     keyWordID += str(id) + ","
 
-        personJson = self.searchKeyword(p)
-        personID = str(personJson["results"]["id"])
-        print(personID)
+        personJson = self.searchPerson(person)
+        personID = str(personJson["results"][0]["id"])
         
 
         movieList = self.discover(genreID,keyWordID,personID)
@@ -228,7 +236,51 @@ class Tmdb:
             if (len(list) > 0):
                 title = list[0]['title']
         return title
-    
+
+    #want to return a list of jsons for each movie
+    def advancedSearch(self,genre,keyword,person):
+        recommendList = []
+        title="NO MOVIE FOUND"
+        keyWordID = ""
+        genreID=""
+        genreID+=str(self.searchGenre(genre))
+        for y in keyword:
+            key = self.searchKeyword(y)
+            res = key['results']
+            id = 0
+            for x in res:
+                #compare case insensitive
+                if x['name'].casefold() == y.casefold():
+                    id = x['id']
+                    #print("keyword: ", y)
+                    #print("keywordID: ", id)
+                    keyWordID += str(id) + ","
+        
+        #must check if there are person preferences
+        if len(person) != 0:
+            for name in person:
+                personJson = self.searchPerson(name)
+                personID = str(personJson["results"][0]["id"])
+                movieList = self.discover(genreID,keyWordID,personID)
+                list = self.parseTimes(movieList, time)
+                if (movieList.get("total_results")!=0):
+                    if (len(list) > 0):
+                        result = list[0]
+                        #for loop here iterating through the list of movies (get like the 3 top movies)
+                        i = 0;
+                        for result in list:
+                            recommendList.append(result)
+                            if i >2:
+                                break
+                            i+=1
+            #now that we have some movies with people, now we need to find movies without people and where time does not matter
+            simpleMovieList = self.simpleDiscover(genreID,keyWordID)
+            if simpleMovieList["total_results"] != 0:
+                for result in simpleMovieList["results"]:
+                    recommendList.append(result)
+
+        return recommendList
+        
 
 response = assistant.delete_session(
     assistant_id=ass_id,
@@ -236,5 +288,4 @@ response = assistant.delete_session(
     ).get_result()
 
 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
-person = "Will Smith"
-print(test.simpleSearch(genre,keywords,person))
+print(test.advancedSearch(genre,keywords,likesActor))
