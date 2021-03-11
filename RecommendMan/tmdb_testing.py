@@ -116,7 +116,9 @@ def assistant(inputValue, storage):
             return title
 
         #want to return a list of jsons for each movie
-        def advancedSearch(self,genre,keyword,person):
+        def advancedSearch(self,genre,keyword):
+            people = storage.getLikesActor()
+            badppl = storage.getDislikesActor()
             recommendList = []
             title="NO MOVIE FOUND"
             keyWordID = ""
@@ -135,8 +137,8 @@ def assistant(inputValue, storage):
                         keyWordID += str(id) + ","
         
             #must check if there are person preferences
-            if len(person) != 0:
-                for name in person:
+            if len(people) != 0:
+                for name in people:
                     personJson = self.searchPerson(name)
                     personID = str(personJson["results"][0]["id"])
                     movieList = self.discover(genreID,keyWordID,personID)
@@ -152,11 +154,29 @@ def assistant(inputValue, storage):
                                     break
                                 i+=1
                 #now that we have some movies with people, now we need to find movies without people and where time does not matter
-                simpleMovieList = self.simpleDiscover(genreID,keyWordID)
-                if simpleMovieList["total_results"] != 0:
-                    for result in simpleMovieList["results"]:
-                        recommendList.append(result)
+            simpleMovieList = self.simpleDiscover(genreID,keyWordID)
+            if simpleMovieList["total_results"] != 0:
+                for result in simpleMovieList["results"]:
+                    #print("results: " + result)
+                    recommendList.append(result)
 
+            #get cast of movies, exclude any with actors u dont like
+            #print("lis" + recommendList)
+            print(recommendList[0]["id"])
+            for movie in recommendList:
+                cast = requests.get("https://api.themoviedb.org/3/movie/" + str(movie["id"]) + "/credits?api_key=6ca5bdeac62d09b1186aa4b0fd678720&language=en-US").json()
+                #print(cast)
+                minsize = 10
+                castsize = len(cast["cast"])
+                if castsize < 10:
+                    minsize = castsize
+                for member in range(minsize):
+                    for badperson in badppl: 
+                        if cast["cast"][member]["name"] == badperson:
+                            recommendList.remove(movie)
+
+
+            print(recommendList)
             return recommendList
         
 #test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
@@ -237,7 +257,7 @@ def assistant(inputValue, storage):
         #print(test.simpleSearch(genre,keywords))
         state=statelist.searchState()
         #print("THIS IS THE HOME NODE")
-        return([test.simpleSearch(genre,keywords) + "  " + "Search for another movie, get an example query, or return. ",state])
+        return([test.advancedSearch(genre,keywords)[0]["title"] + "  " + "Search for another movie, get an example query, or return. ",state])
     else:
         state = response["context"]["skills"]["main skill"]["system"]["state"]
         if output[0]["text"] == "ACTORLIKE":
