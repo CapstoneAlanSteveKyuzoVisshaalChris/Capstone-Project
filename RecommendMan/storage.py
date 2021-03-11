@@ -19,7 +19,7 @@ class Storage:
     def getRecommends(self):
         return self.recommends
     def popRecommends(self):
-        self.recommends.pop()
+        self.recommends.pop(0)
 
 
     def addLikesActor(self, actor):

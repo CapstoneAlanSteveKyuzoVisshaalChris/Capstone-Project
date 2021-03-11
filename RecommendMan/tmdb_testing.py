@@ -311,13 +311,13 @@ def assistant(inputValue, storage):
 
     elif state == "CONFIRM":
         if inputValue=="Y" or inputValue == "y":
-            return [("OK! Have fun watching " + storage.recommends()[0] + "!"), statelist.startState()]
+            return [("OK! Have fun watching " + storage.getRecommends()[0]["title"] + "! - Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"), statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
-            if len(storage.recommends()) > 0:
+            if len(storage.getRecommends()) > 0:
                 storage.popRecommends()
-                return [("How about this one: " + storage.recommends()[0] + " - [Y/N]"), "CONFIRM"]
+                return [("How about this one: " + storage.getRecommends()[0]["title"] + " - [Y/N]"), "CONFIRM"]
             else:
-                return[("Sorry, there are no more movies that fit your query :("), statelist.startState()]
+                return[("Sorry, there are no more movies that fit your query :( - Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"), statelist.startState()]
 
 
     #usertext = input("YOUR INPUT HERE: ")
