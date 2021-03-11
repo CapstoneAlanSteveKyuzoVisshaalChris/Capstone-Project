@@ -6,12 +6,21 @@ class Storage:
         self.dislikesActor = []
         self.likesGenre = []
         self.dislikesGenre =[]
+        self.recommends = []
 
     def update(self, st):
             self.state = st
 
     def getState(self): 
             return self.state
+
+    def updateRecommends(self, recList):
+        self.recommends = recList
+    def getRecommends(self):
+        return self.recommends
+    def popRecommends(self):
+        self.recommends.pop(0)
+
 
     def addLikesActor(self, actor):
         self.likesActor.append(actor)
