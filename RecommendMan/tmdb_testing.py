@@ -5,7 +5,9 @@ from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 
-def assistant(inputValue):
+###Return a list: the string to output, and the state
+retpack = ["returnstmt", "statestring"]
+def assistant(inputValue, state):
     ###TMDB CLASS#########
     class Tmdb:
         def __init__(self,key):
@@ -101,7 +103,7 @@ def assistant(inputValue):
 
     #print(response)
     startstate = 'eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
-    state = startstate
+    #state = startstate
 
     likesActor = []
     dislikesActor = []
@@ -162,7 +164,7 @@ def assistant(inputValue):
         #print(test.simpleSearch(genre,keywords))
         state=startstate
         #print("THIS IS THE HOME NODE")
-        return(test.simpleSearch(genre,keywords))
+        return([test.simpleSearch(genre,keywords),state])
     else:
         state = response["context"]["skills"]["main skill"]["system"]["state"]
         if output[0]["text"] == "ACTORLIKE":
@@ -173,7 +175,7 @@ def assistant(inputValue):
                     #print("Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in dislikesActor:
                         dislikesActor.remove(word.get("value"))
-                    return "ACTORLIKE"
+                    return ["ACTORLIKE",state]
         elif output[0]["text"] == "ACTORDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="actornames":
@@ -182,7 +184,7 @@ def assistant(inputValue):
                     dislikesActor.append(word.get("value"))
                     if word.get("value") in likesActor:
                         likesActor.remove(word.get("value"))
-                    return "ACTORDISLIKE"
+                    return ["ACTORDISLIKE",state]
         elif output[0]["text"] == "GENRELIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
@@ -191,7 +193,7 @@ def assistant(inputValue):
                     print("Tell me the genre name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in dislikesGenre:
                         dislikesGenre.remove(word.get("value"))
-                    return "GENRELIKE"
+                    return ["GENRELIKE",state]
         elif output[0]["text"] == "GENREDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
@@ -200,26 +202,28 @@ def assistant(inputValue):
                     print("Tell me the genre and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
                     if word.get("value") in likesGenre:
                         likesGenre.remove(word.get("value"))
-                    return "GENREDISLIKE"
+                    return ["GENREDISLIKE",state]
         elif output[0]["text"] == "ACTORLIST":
             print("YOU LIKE: ", likesActor)
             print("YOU DISLIKE: ", dislikesActor)
-            return "ACTORLIST"
+            return ["ACTORLIST",state]
         elif output[0]["text"] == "GENRELIST":
             print("YOU LIKE: ", likesGenre)
             print("YOU DISLIKE: ", dislikesGenre)
-            return "GENRELIST"
+            return ["GENRELIST",state]
         elif output[0]["text"] == "GENREALL":
             print("ACTION, ADVENTURE, COMEDY, CRIME")
             print("DRAMA, FAMILY, FANTASY, HISTORY")
             print("HORROR, MUSIC, MYSTERY, ROMANCE")
             print("SCI-FI, THRILLER, WAR, WESTERN")
-            return "GENREALL"
+            return ["GENREALL",state]
         else:
             #print(output)
             for resp in output:
                 print(resp["text"])
-            return (output[0]["text"])
+            retpack[0] = (output[0]["text"])
+            retpack[1] = state
+            return retpack
 
     #usertext = input("YOUR INPUT HERE: ")
     #print(state)
