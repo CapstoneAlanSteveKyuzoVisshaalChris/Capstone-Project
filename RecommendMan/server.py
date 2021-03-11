@@ -5,7 +5,7 @@ import base64
 import threading
 import tmdb
 import tmdb_testing
-import state
+import storage
 
 
 def get_headers(data):
@@ -101,7 +101,7 @@ def handler_msg(conn):
 
             if data_recv[0:1] == b"\x81":
                 data_parse = parse_payload(data_recv)
-                retlist = tmdb_testing.assistant(data_parse, st.getState())
+                retlist = tmdb_testing.assistant(data_parse, st)
                 output = retlist[0]
                 st.update(retlist[1])
                 # print(output)
@@ -118,5 +118,5 @@ def server_socket():
 
 
 if __name__ == "__main__":
-    st = state.State()
+    st = storage.Storage()
     server_socket()

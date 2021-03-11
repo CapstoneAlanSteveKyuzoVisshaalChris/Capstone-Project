@@ -1,5 +1,7 @@
 import requests
 import json
+import storage
+import statelist
 
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -7,7 +9,7 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 ###Return a list: the string to output, and the state
 retpack = ["returnstmt", "statestring"]
-def assistant(inputValue, state):
+def assistant(inputValue, storage):
     ###TMDB CLASS#########
     class Tmdb:
         def __init__(self,key):
@@ -102,13 +104,14 @@ def assistant(inputValue, state):
     ass_id = '2120d4b4-5d21-4880-981c-245436c7e12f'
 
     #print(response)
-    startstate = 'eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
-    #state = startstate
+    startstate = statelist.startState()
+    searchstate = '0'
+    state = storage.getState()
 
-    likesActor = []
-    dislikesActor = []
-    likesGenre = []
-    dislikesGenre = []
+    #likesActor = []
+    #dislikesActor = []
+    #likesGenre = []
+    #dislikesGenre = []
     ###
 
     #if/else to see if startstate or not?
@@ -134,7 +137,7 @@ def assistant(inputValue, state):
             ).get_result()
     
     output = response["output"]["generic"]
-    print("OUTPUT: ", output)
+    print("OUTPUT[0][\"text\"]: ", output[0]["text"])
 
     if output[0]["text"] == "SEARCH":
         json_str = json.dumps(response, indent=2)
@@ -162,67 +165,56 @@ def assistant(inputValue, state):
 
         test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
         #print(test.simpleSearch(genre,keywords))
-        state=startstate
+        state=statelist.searchState()
         #print("THIS IS THE HOME NODE")
-        return([test.simpleSearch(genre,keywords),state])
+        return([test.simpleSearch(genre,keywords) + "  " + "Search for another movie, get an example query, or return. ",state])
     else:
         state = response["context"]["skills"]["main skill"]["system"]["state"]
         if output[0]["text"] == "ACTORLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="actornames":
-                    #print("YOU LIKE: ", word.get("value"))
-                    likesActor.append(word.get("value"))
-                    #print("Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
-                    if word.get("value") in dislikesActor:
-                        dislikesActor.remove(word.get("value"))
-                    return ["ACTORLIKE",state]
+                    storage.addLikesActor(word["value"])
+                    return ["You like "+word["value"]+"; tell me if you like/dislike another actor, type \"list\" to see a list of preferences, or \"return\" to go back." ,state]
         elif output[0]["text"] == "ACTORDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="actornames":
-                    print("YOU DISLIKE: ", word.get("value"))
-                    print("Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
-                    dislikesActor.append(word.get("value"))
-                    if word.get("value") in likesActor:
-                        likesActor.remove(word.get("value"))
-                    return ["ACTORDISLIKE",state]
+                    storage.addDislikesActor(word["value"])
+                    return ["You dislike "+word["value"]+"; tell me if you like/dislike another actor, type \"list\" to see a list of preferences, or \"return\" to go back.",state]
         elif output[0]["text"] == "GENRELIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
-                    print("YOU LIKE: ", word.get("value"))
-                    likesGenre.append(word.get("value"))
-                    print("Tell me the genre name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
-                    if word.get("value") in dislikesGenre:
-                        dislikesGenre.remove(word.get("value"))
-                    return ["GENRELIKE",state]
+                    storage.addLikesGenre(word["value"])
+                    return ["You like "+word["value"]+"; tell me if you like/dislike another genre, type \"list\" to see a list of preferences, or \"return\" to go back.",state]
         elif output[0]["text"] == "GENREDISLIKE":
             for word in response["output"]["entities"]:
                 if word.get("entity")=="genre":
-                    print("YOU DISLIKE: ", word.get("value"))
-                    dislikesGenre.append(word.get("value"))
-                    print("Tell me the genre and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.")
-                    if word.get("value") in likesGenre:
-                        likesGenre.remove(word.get("value"))
-                    return ["GENREDISLIKE",state]
+                    storage.addDislikesGenre(word["value"])
+                    return ["You dislike "+word["value"]+"; tell me if you like/dislike another genre, type \"list\" to see a list of preferences, or \"return\" to go back.",state]
         elif output[0]["text"] == "ACTORLIST":
-            print("YOU LIKE: ", likesActor)
-            print("YOU DISLIKE: ", dislikesActor)
-            return ["ACTORLIST",state]
+            likeslist = storage.getLikesActor()
+            dislikeslist = storage.getDislikesActor()
+            return [likeslist+"  "+dislikeslist + " Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.",state]
         elif output[0]["text"] == "GENRELIST":
-            print("YOU LIKE: ", likesGenre)
-            print("YOU DISLIKE: ", dislikesGenre)
-            return ["GENRELIST",state]
+            likeslist = storage.getLikesGenre()
+            dislikeslist = storage.getDislikesGenre()
+            return [likeslist+"  "+dislikeslist + " Tell me the actor's/actresses' name and if you like/dislike them. Type \"return\" to go back, or \"list\" to see a list of your preferences.",state]
+        #elif output[0]["text"] == "RESET":
+        #    storage.clearPrefs()
+        #    return ["Preferences are reset. Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?", statelist.startState]
         elif output[0]["text"] == "GENREALL":
-            print("ACTION, ADVENTURE, COMEDY, CRIME")
-            print("DRAMA, FAMILY, FANTASY, HISTORY")
-            print("HORROR, MUSIC, MYSTERY, ROMANCE")
-            print("SCI-FI, THRILLER, WAR, WESTERN")
-            return ["GENREALL",state]
+            #print("ACTION, ADVENTURE, COMEDY, CRIME")
+            #print("DRAMA, FAMILY, FANTASY, HISTORY")
+            #print("HORROR, MUSIC, MYSTERY, ROMANCE")
+            #print("SCI-FI, THRILLER, WAR, WESTERN")
+            return ["ACTION, ADVENTURE, COMEDY, CRIME, DRAMA, FAMILY, FANTASY, HISTORY, HORROR, MUSIC, MYSTERY, ROMANCE, SCI-FI, THRILLER, WAR, WESTERN; Do you want a list of genres, an example of keywords, or return?",state]
         else:
             #print(output)
+            assmess = ""
             for resp in output:
-                print(resp["text"])
-            retpack[0] = (output[0]["text"])
+                assmess = assmess + "  "+ resp["text"]
+            retpack[0] = (assmess)
             retpack[1] = state
+            #print (state)
             return retpack
 
     #usertext = input("YOUR INPUT HERE: ")
