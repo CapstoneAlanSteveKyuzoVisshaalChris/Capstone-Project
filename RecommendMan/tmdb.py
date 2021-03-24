@@ -111,6 +111,16 @@ def tmdb(inputValue):
                     id = req["genres"][i].get("id")
                 i+=1
             return id
+        
+        #gets person name from tmdb using search func and return the json output
+        def searchPerson(self, person):
+            url = 'https://api.themoviedb.org/3/search/people?api_key=' + self.key + '&query='
+            if ' ' in person:
+                person.replace(' ','%20')
+            search = url + person
+            return requests.get(search).json()
+
+
 
         def searchKeyword(self, keyword):
             url = 'https://api.themoviedb.org/3/search/keyword?api_key=' + self.key + '&query='
@@ -145,6 +155,7 @@ def tmdb(inputValue):
             title="NO MOVIE FOUND"
             keyWordID = ""
             genreID=""
+            personID = ""
             genreID+=str(self.searchGenre(genre))
             for y in keyword:
                 key = self.searchKeyword(y)
