@@ -55,3 +55,13 @@ function changeBot(id){
     }
     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
 }
+
+const themeColors = document.querySelectorAll('.theme-color');
+
+themeColors.forEach(themeColor => {
+  themeColor.addEventListener('click', e => {
+    themeColors.forEach(c => c.classList.remove('active'));
+    const theme = themeColor.getAttribute('data-color');
+    document.body.setAttribute('data-theme', theme);
+    themeColor.classList.add('active');
+  });});
