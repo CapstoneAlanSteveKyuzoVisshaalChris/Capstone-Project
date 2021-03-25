@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\js",
+    "\\obj"
   ],
+  "SelectedNode": "\\server.py",
   "PreviewInSolutionExplorer": false
 }
