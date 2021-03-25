@@ -105,7 +105,11 @@ def handler_msg(conn):
                 output = retlist[0]
                 st.update(retlist[1])
                 # print(output)
-            send_msg(c, bytes("{}".format(output), encoding="utf-8"))
+            if(isinstance(output, str)):
+               send_msg(c, bytes("{}".format(output), encoding="utf-8"))
+            else:
+                for i in range(len(output)):
+                    send_msg(c, bytes("{}".format(output[i]), encoding="utf-8"))
 
 
 def server_socket():

@@ -16,3 +16,24 @@ function send(){
     }
     document.getElementById("chat-input").value = "";
 }
+
+function changeBot(id){
+    switch(id){
+        case "movieBot":
+            document.getElementById("movieBot").className = "chat-list-item active";
+            document.getElementById("actorBot").className = "chat-list-item";
+            document.getElementById("profileImage").src = "img/1.jpg";
+            document.getElementById("botName").textContent = "Movie Recommend-Man";
+            document.getElementById("botInstruction").textContent = "Movie Recommend-Man Introduction";
+            break;
+        case "actorBot":
+            document.getElementById("movieBot").className = "chat-list-item";
+            document.getElementById("actorBot").className = "chat-list-item active";
+            document.getElementById("profileImage").src = "img/2.jpg";
+            document.getElementById("botName").textContent = "Actor Recommend-Man";
+            document.getElementById("botInstruction").textContent = "Actor Recommend-Man Introduction";
+            break;
+        default:
+
+    }
+}

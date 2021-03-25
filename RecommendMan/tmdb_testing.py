@@ -162,7 +162,7 @@ def assistant(inputValue, storage):
 
             #get cast of movies, exclude any with actors u dont like
             #print("lis" + recommendList)
-            #print(recommendList[0]["id"])
+            print(recommendList[0]["id"])
             for movie in recommendList:
                 cast = requests.get("https://api.themoviedb.org/3/movie/" + str(movie["id"]) + "/credits?api_key=6ca5bdeac62d09b1186aa4b0fd678720&language=en-US").json()
                 #print(cast)
@@ -197,8 +197,6 @@ def assistant(inputValue, storage):
     startstate = statelist.startState()
     searchstate = '0'
     state = storage.getState()
-
-    print("STATE: ", state)
 
     #likesActor = []
     #dislikesActor = []
@@ -261,19 +259,11 @@ def assistant(inputValue, storage):
 
                 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
                 #print(test.simpleSearch(genre,keywords))
-                if len(keywords) <= 4:
-                    state=statelist.searchState()
-                    #print("QQO")
-                    if len(test.advancedSearch(genre,keywords)) > 0:
-                        #print(test.advancedSearch(genre,keywords))
-                        title = test.advancedSearch(genre,keywords)[0]["title"]
-                        storage.popRecommends()
-                        storage.title = title
-                        return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
-                    else : 
-                        return [["NO MOVIE FOUND!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
-                else: 
-                    return[["Too many keywords!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
+                state=statelist.searchState()
+                #print("THIS IS THE HOME NODE")
+                title = test.advancedSearch(genre,keywords)[0]["title"]
+                storage.popRecommends()
+                return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
             else:
                 state = response["context"]["skills"]["main skill"]["system"]["state"]
                 if output[0]["text"] == "ACTORLIKE":
@@ -330,17 +320,14 @@ def assistant(inputValue, storage):
 
     elif state == "CONFIRM":
         if inputValue=="Y" or inputValue == "y":
-            return [["OK! Have fun watching " + storage.title + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
+            return [[("OK! Have fun watching " + storage.getRecommends()[0]["title"] + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:
                 title = storage.getRecommends()[0]["title"]
                 storage.popRecommends()
-                storage.title = title
                 return [("How about this one: " + title + " - [Y/N]"), "CONFIRM"]
             else:
-                return[["Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
-        else:
-            return["Sorry, put your input again: [Y/N]", "CONFIRM"]
+                return[[("Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
 
 
     #usertext = input("YOUR INPUT HERE: ")
