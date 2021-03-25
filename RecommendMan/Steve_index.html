@@ -40,13 +40,17 @@
           <img src="img/2.jpg" alt="chat">
           <span class="chat-list-name">Actor Recommend-Man</span>
         </li>
+        <li id = "preferBot" class="chat-list-item" onclick = changeBot(this.id)>
+          <img src="img/3.jpg" alt="chat">
+          <span class="chat-list-name">Preference Manager</span>
+        </li>
       </ul>
     </div>
   </div>
   <div class="app-main">
     <div id = "chat-wrapper" class="chat-wrapper">
         <div class="message-wrapper">
-            <div class="message-box-wrapper">
+            <div id = "bot-chat" class="message-box-wrapper">
                 <div class="message-box">
                     Welcome! I am Recommend-Man! I can recommend you movies based on your input!
                 </div>
