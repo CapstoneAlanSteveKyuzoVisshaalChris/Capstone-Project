@@ -1,16 +1,20 @@
 from flask import Flask, abort, session, redirect, url_for, request, render_template, json
 from markupsafe import escape 
 
-# ????
+# Basically "name = __init___", but for web servers
 app = Flask(__name__)
+
+# The secret ingredient is... how we store session data.
 app.secret_key = b'\xe1q\xf5\xd4\xa3=\xa8\xc0\x18\xf9\xb3G`\xe0"\xa2'
 
-prefs_saved = {} # CAUTION: ONLY SAVED WHILE SERVER IS RUNNING! RESETS EVERY SESSION!
-
+"""CAUTION: PREFERENCES ARE DELETED UPON SERVER SHUTDOWN"""
+prefs_saved = {} 
 
 # Main Page
 @app.route('/', methods=['POST'])
 def index():
+
+    print("Gello Gworld")
     # 
     user = request.form['username'] 
     
