@@ -162,10 +162,11 @@ def assistant(inputValue, storage):
 
             #get cast of movies, exclude any with actors u dont like
             #print("lis" + recommendList)
-            print(recommendList[0]["id"])
+            #print("RL", recommendList)
+            #print(recommendList[0]["id"])
             for movie in recommendList:
                 cast = requests.get("https://api.themoviedb.org/3/movie/" + str(movie["id"]) + "/credits?api_key=6ca5bdeac62d09b1186aa4b0fd678720&language=en-US").json()
-                #print(cast)
+                #print(movie)
                 minsize = 10
                 castsize = len(cast["cast"])
                 if castsize < 10:
@@ -258,12 +259,20 @@ def assistant(inputValue, storage):
 
 
                 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
+                #print("genre", genre)
+                print("kiwi", keywords)
                 #print(test.simpleSearch(genre,keywords))
                 state=statelist.searchState()
                 #print("THIS IS THE HOME NODE")
-                title = test.advancedSearch(genre,keywords)[0]["title"]
-                storage.popRecommends()
-                return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
+                mov = test.advancedSearch(genre,keywords)
+                if len(mov) > 0:
+                    title = mov[0]["title"]
+                    overview = mov[0]["overview"]
+                    storage.popRecommends()
+                    storage.current = title
+                    return(['<b>'+ title + '</b>'+":  " + overview + "-  "+ "Do you want this movie? [Y/N]","CONFIRM"])
+                else:
+                    return(["NO RESULT FOUND; The keywords may have been too specific. Try removing some keywords, or searching nouns without plurals.",statelist.searchState()])
             else:
                 state = response["context"]["skills"]["main skill"]["system"]["state"]
                 if output[0]["text"] == "ACTORLIKE":
@@ -320,12 +329,15 @@ def assistant(inputValue, storage):
 
     elif state == "CONFIRM":
         if inputValue=="Y" or inputValue == "y":
-            return [[("OK! Have fun watching " + storage.getRecommends()[0]["title"] + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
+            return [[("OK! Have fun watching " + storage.current + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:
-                title = storage.getRecommends()[0]["title"]
+                mov = storage.getRecommends()[0]
+                title = mov["title"]
+                overview = mov["overview"]
                 storage.popRecommends()
-                return [("How about this one: " + title + " - [Y/N]"), "CONFIRM"]
+                storage.current = title
+                return [("How about this one: " + "<b>"+  title + "</b>" + ":  " + overview + "-  [Y/N]"), "CONFIRM"]
             else:
                 return[[("Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
 

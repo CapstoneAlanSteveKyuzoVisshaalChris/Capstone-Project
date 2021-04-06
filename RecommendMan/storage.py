@@ -8,6 +8,7 @@ class Storage:
         self.likesGenre = []
         self.dislikesGenre =[]
         self.recommends = []
+        self.current = ""
 
     def update(self, st):
             self.state = st
@@ -15,14 +16,12 @@ class Storage:
     def getState(self): 
             return self.state
 
-
     def updateRecommends(self, recList):
         self.recommends = recList
     def getRecommends(self):
         return self.recommends
     def popRecommends(self):
         self.recommends.pop(0)
-
 
     def addLikesActor(self, actor):
         self.likesActor.append(actor)
