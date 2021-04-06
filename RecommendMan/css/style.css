@@ -705,7 +705,16 @@ body[data-theme=dark] {
   margin-top: auto;
   padding-bottom: 10px;
 }
-
+.app-theme-changer{
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  background-color: var(--app-bg);
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: auto;
+  padding-top: 10px;
+}
 .app-theme-selector {
   background-color: var(--box-color);
   box-shadow: var(--box-shadow);
