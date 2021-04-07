@@ -6,6 +6,7 @@ import threading
 import tmdb
 import tmdb_testing
 import storage
+import time
 
 
 def get_headers(data):
@@ -107,9 +108,11 @@ def handler_msg(conn):
                 # print(output)
             if(isinstance(output, str)):
                send_msg(c, bytes("{}".format(output), encoding="utf-8"))
+               time.sleep(1)
             else:
                 for i in range(len(output)):
                     send_msg(c, bytes("{}".format(output[i]), encoding="utf-8"))
+                    time.sleep(1)
 
 
 def server_socket():
