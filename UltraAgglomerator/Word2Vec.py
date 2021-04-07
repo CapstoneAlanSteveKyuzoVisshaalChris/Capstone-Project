@@ -1,5 +1,6 @@
 from flask import Flask, abort, session, redirect, url_for, request, render_template, json
-from markupsafe import escape 
+from markupsafe import escape
+from GloVe_Python.distance_pre import related_words
 
 # Basically "name = __init___", but for web servers
 app = Flask(__name__)
@@ -14,14 +15,11 @@ def index():
     # Retrieve Keywords
     keywords = request.json['keywords']
 
-    # TODO: Expand keywords
+    # Expand keywords
     keywords_expanded = {}
     for keyword in keywords:
-        keywords_related = {keyword}
-        for x in range(5):
-            keywords_related.add(x) # TODO: Call a "get related" function
-        keywords_expanded[keyword] = keywords_related
-
+        keywords_expanded[keyword] = related_words(keyword, 5)
+    
     # Return expanded list of keywords
     return json.jsonify(keywords_expanded)
 

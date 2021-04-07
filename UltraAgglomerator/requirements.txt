@@ -1,2 +1,6 @@
 flask
 redis
+numpy
+cython
+pytest
+pybind11
