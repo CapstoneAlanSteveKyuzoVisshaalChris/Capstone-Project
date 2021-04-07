@@ -269,7 +269,7 @@ def assistant(inputValue, storage):
                     title = movieList[0]["title"]
                     poster = "https://www.themoviedb.org/t/p/original" + movieList[0]["poster_path"]
                     storage.popRecommends()
-                    return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
+                    return[[poster, title + "  -" + "Do you want this movie? [Y/N]"],"CONFIRM"]
                 else:
                     return[["Sorry, there are no movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
             else:
@@ -332,8 +332,9 @@ def assistant(inputValue, storage):
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:
                 title = storage.getRecommends()[0]["title"]
+                poster = "https://www.themoviedb.org/t/p/original" + storage.getRecommends()[0]["poster_path"]
                 storage.popRecommends()
-                return [("How about this one: " + title + " - [Y/N]"), "CONFIRM"]
+                return [[poster, "How about this one: " + title + " - [Y/N]"], "CONFIRM"]
             else:
                 return[["Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
 
