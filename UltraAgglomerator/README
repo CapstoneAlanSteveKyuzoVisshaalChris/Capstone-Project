@@ -1,0 +1,8 @@
+"docker-compose up" should usually start the server, but if that doesn't work,
+"sudo docker-compose up" will start the server (no matter what).
+
+To terminate the server press Ctrl+C.
+
+If there are "code update doesn't seem to have done anything errors":
+Don't forget: "docker-compose down"
+And then: Delete "image" from Docker Desktop
