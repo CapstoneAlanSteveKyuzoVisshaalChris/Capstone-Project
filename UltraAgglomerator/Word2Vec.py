@@ -17,7 +17,6 @@ def index():
 
     # Expand keywords
     keywords_expanded = {}
-
     for keyword in keywords:
         keywords_expanded[keyword] = related_words(keyword, 5)
     
