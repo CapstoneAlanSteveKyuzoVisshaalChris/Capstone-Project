@@ -50,15 +50,21 @@
   <div class="app-main">
     <div id = "chat-wrapper" class="chat-wrapper">
         <div class="message-wrapper">
-            <div id = "bot-chat" class="message-box-wrapper">
+            <div id="bot-chat" class="message-box-wrapper">
                 <div class="message-box">
                     Welcome! I am Recommend-Man! I can recommend you movies based on your input!
                 </div>
-                <span>Just now</span>
+                <span id="date1"></span>
+                <script>
+                    document.getElementById("date1").innerHTML = Date();
+                </script>
                 <div class="message-box">
                     Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?
                 </div>
-                <span>Just now</span>
+                <span id="date2"></span>
+                <script>
+                    document.getElementById("date2").innerHTML = Date();
+                </script>
             </div>
       </div>
     </div>
