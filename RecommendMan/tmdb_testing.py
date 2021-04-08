@@ -164,8 +164,8 @@ def assistant(inputValue, storage):
             #print("lis" + recommendList)
             #print("RL", recommendList)
             #print(recommendList[0]["id"])
-            if(recommendList):
-                print(recommendList[0]["id"])
+            #if(recommendList):
+                #print(recommendList[0]["id"])
             for movie in recommendList:
                 cast = requests.get("https://api.themoviedb.org/3/movie/" + str(movie["id"]) + "/credits?api_key=6ca5bdeac62d09b1186aa4b0fd678720&language=en-US").json()
                 #print(movie)
@@ -180,7 +180,7 @@ def assistant(inputValue, storage):
 
 
             storage.updateRecommends(recommendList)
-            print(recommendList)
+            #print(recommendList)
             return recommendList
         
     #test = Tmdb("")
@@ -270,14 +270,14 @@ def assistant(inputValue, storage):
         output = response["output"]["generic"]
         if ("text" in output[0]):
 
-            print("OUTPUT[0][\"text\"]: ", output[0]["text"])
+            #print("OUTPUT[0][\"text\"]: ", output[0]["text"])
 
             if output[0]["text"] == "SEARCH":
                 json_str = json.dumps(response, indent=2)
                 #SIZE
                 size = len(response["output"]["entities"])
-                print(response)
-                print(response["output"]["entities"])
+                #print(response)
+                #print(response["output"]["entities"])
                 #GENRE
                 genre=""
                 for word in response["output"]["entities"]:
@@ -294,8 +294,8 @@ def assistant(inputValue, storage):
                     close = difflib.get_close_matches(w, keywordscand)
                     if len(close) > 0:
                         keywords.append(close[0])
-                print(keywordscand)
-                print(keywords)
+                #print(keywordscand)
+                #print(keywords)
                 #TIME
                 time = ""
                 for word in response["output"]["entities"]:
@@ -311,8 +311,8 @@ def assistant(inputValue, storage):
                 state=statelist.searchState()
                 #print("THIS IS THE HOME NODE")
                 movieList = test.advancedSearch(genre,keywords)
-                print("MOVIELIST")
-                print(movieList)
+                #print("MOVIELIST")
+                #print(movieList)
                 if len(movieList) != 0:
                     title = movieList[0]["title"]
                     overview = movieList[0]["overview"]
@@ -364,14 +364,14 @@ def assistant(inputValue, storage):
                 else:
                     responses = []
                     for resp in output:
-                        print(resp["text"])
+                        #print(resp["text"])
                         responses.append(resp["text"])
                     if len(responses) == 1:
                         retpack[0] = responses[0]
                     else:
                         retpack[0] = responses
                     retpack[1] = state
-                    print(retpack[0])
+                    #print(retpack[0])
                     return retpack
         else:
             return[["Sorry, I didn't understand.", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], state]
@@ -389,6 +389,8 @@ def assistant(inputValue, storage):
                 return [[poster, "'<b>" + title + "</b>' ~~~~~ Here is an overview: " + overview , "\nHow about this one?\t- [Y/N]"], "CONFIRM"]
             else:
                 return[["Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
+        else:
+            return[["Type \"Y\" to confirm movie, or \"N\" to get another movie."], "CONFIRM"]
 
 
     #usertext = input("YOUR INPUT HERE: ")
