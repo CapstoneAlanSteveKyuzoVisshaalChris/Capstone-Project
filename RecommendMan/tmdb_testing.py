@@ -318,6 +318,7 @@ def assistant(inputValue, storage):
                     overview = movieList[0]["overview"]
                     poster = "https://www.themoviedb.org/t/p/original" + movieList[0]["poster_path"]
                     storage.popRecommends()
+                    storage.setChosenMovie(title)
                     return[[poster, "'<b>" + title + "</b>' ~~~~~ Here is an overview: " + overview , "\nDo you want this movie?\t- [Y/N]"],"CONFIRM"]
                 else:
                     return[["Sorry, there are no movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
