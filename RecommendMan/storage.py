@@ -37,7 +37,8 @@ class Storage:
 
 
     def addLikesActor(self, actor):
-        self.likesActor.append(actor)
+        if (actor not in self.likesActor):
+            self.likesActor.append(actor)
         if (actor in self.dislikesActor):
             self.dislikesActor.remove(actor)
         print(self.likesActor)
@@ -53,7 +54,8 @@ class Storage:
         return self.likesActor
 
     def addDislikesActor(self, actor):
-        self.dislikesActor.append(actor)
+        if (actor not in self.dislikesActor):
+            self.dislikesActor.append(actor)
         if (actor in self.likesActor):
             self.likesActor.remove(actor)
 
@@ -67,7 +69,8 @@ class Storage:
         return self.dislikesActor
 
     def addLikesGenre(self, genre):
-        self.likesGenre.append(genre)
+        if (actor not in self.likesGenre):
+            self.likesGenre.append(genre)
         if (actor in self.dislikesGenre):
             self.dislikesGenre.remove(actor)
 
@@ -81,7 +84,8 @@ class Storage:
         return self.likesGenre
 
     def addDislikesGenre(self, genre):
-        self.dislikesGenre.append(genre)
+        if (actor not in self.dislikesGenre):
+            self.dislikesGenre.append(genre)
         if (actor in self.likesGenre):
             self.likesGenre.remove(actor)
 
