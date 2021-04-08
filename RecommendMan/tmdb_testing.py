@@ -2,10 +2,10 @@ import requests
 import json
 import storage
 import statelist
+import difflib
 
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-
 
 ###Return a list: the string to output, and the state
 retpack = ["returnstmt", "statestring"]
@@ -184,6 +184,40 @@ def assistant(inputValue, storage):
     #test = Tmdb("")
     #print(test.advancedSearch(genre,keywords,likesActor))
 
+    def splitter(s):
+        slen = len(s)
+        i = 0
+        phrases = 0
+        current = ""
+        ch = ""
+        sep = []
+        while (i < slen):
+          ch = s[i]
+          if phrases == 0 :
+            if (ch == "/"):
+              i -=1
+              phrases = 1
+            else:  
+              if (ch != " "):
+                current = current + str(ch)
+              else:
+                if current != " " and len(current) != 0:
+                  sep.append(current)
+                current = ""
+          if phrases == 1:
+            if ch != "/":
+              current = current + str(ch)
+            else:
+              if current != " " and len(current) != 0:
+                phrases = 0
+                sep.append(current)
+              current = ""
+          i+=1
+        sep.append(current)
+        for a in sep: 
+          if a.isspace() or len(a) == 0:
+            sep.remove(a)
+        return sep
 
     ###startup
     authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
@@ -198,6 +232,8 @@ def assistant(inputValue, storage):
     startstate = statelist.startState()
     searchstate = '0'
     state = storage.getState()
+
+    inp_arr = splitter(inputValue)
 
     #likesActor = []
     #dislikesActor = []
@@ -238,7 +274,8 @@ def assistant(inputValue, storage):
                 json_str = json.dumps(response, indent=2)
                 #SIZE
                 size = len(response["output"]["entities"])
-                #print(response["output"]["entities"])
+                print(response)
+                print(response["output"]["entities"])
                 #GENRE
                 genre=""
                 for word in response["output"]["entities"]:
@@ -247,9 +284,16 @@ def assistant(inputValue, storage):
                             break
                 #KEYWORD
                 keywords = []
+                keywordscand = []
                 for word in response["output"]["entities"]:
                     if word.get("entity")=="keywords":
-                            keywords.append(word.get("value"))
+                            keywordscand.append(word.get("value"))
+                for w in inp_arr:
+                    close = difflib.get_close_matches(w, keywordscand)
+                    if len(close) > 0:
+                        keywords.append(close[0])
+                print(keywordscand)
+                print(keywords)
                 #TIME
                 time = ""
                 for word in response["output"]["entities"]:
