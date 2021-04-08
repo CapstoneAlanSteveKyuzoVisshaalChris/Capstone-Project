@@ -3,11 +3,11 @@ class Storage:
     def __init__(self):
         self.state = 'eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
         self.title = ""
-        self.history = []
+        self.history = ["I, Robot"]
         self.chosenMovie = ''
         self.likesActor = []
         self.dislikesActor = []
-        self.likesGenre = []
+        self.likesGenre = ["Crime", "Comedy"]
         self.dislikesGenre =[]
         self.recommends = []
         self.current = ""
@@ -69,10 +69,10 @@ class Storage:
         return self.dislikesActor
 
     def addLikesGenre(self, genre):
-        if (actor not in self.likesGenre):
+        if (genre not in self.likesGenre):
             self.likesGenre.append(genre)
-        if (actor in self.dislikesGenre):
-            self.dislikesGenre.remove(actor)
+        if (genre in self.dislikesGenre):
+            self.dislikesGenre.remove(genre)
 
     def printLikesGenre(self):
         list = "Likes: "
@@ -84,10 +84,10 @@ class Storage:
         return self.likesGenre
 
     def addDislikesGenre(self, genre):
-        if (actor not in self.dislikesGenre):
+        if (genre not in self.dislikesGenre):
             self.dislikesGenre.append(genre)
-        if (actor in self.likesGenre):
-            self.likesGenre.remove(actor)
+        if (genre in self.likesGenre):
+            self.likesGenre.remove(genre)
 
     def printDislikesGenre(self):
         list = "Dislikes: "

@@ -61,6 +61,26 @@ function show_actor(){
         };
 }
 
+function quickie() {
+    var date = new Date();
+    document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper reverse"><div class="message-box-wrapper"><div class="message-box">' + "GO!" + '</div>';
+    if (ws) {
+        ws.send("QUICK");
+    }
+    ws.onmessage = function (evt) {
+        console.log("fdsa");
+        isUrl = isValidHttpUrl(evt.data)
+        if (isUrl) {
+            //var img = new Image();
+            document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box" style="width:310px;height:390px;"><img src="' + evt.data + '" style="width:230px;height:370px;"></div><span>' + date + '</span></div></div>';
+        }
+        else {
+            document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">' + evt.data + '</div><span>' + date + '</span></div></div>';
+        }
+        messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+    };
+}
+
 function changeBot(id){
     var date = new Date();
     switch(id){
