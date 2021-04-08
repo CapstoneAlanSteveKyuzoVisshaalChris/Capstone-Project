@@ -323,16 +323,11 @@ def assistant(inputValue, storage):
                     return[["Sorry, there are no movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
             else:
                 state = response["context"]["skills"]["main skill"]["system"]["state"]
-                actorcount = 0
                 if output[0]["text"] == "ACTORLIKE":
                     for word in response["output"]["entities"]:
                         if word.get("entity")=="actornames":
-                            actorcount+=1
-                        if actorcount == 1:
                             storage.addLikesActor(word["value"])
                             return [["You like "+word["value"], "Tell me if you like/dislike another actor, type \"list\" to see a list of preferences, or \"return\" to go back."] ,state]
-                        else:
-                            [["Sorry, more than one actor found. Try again.", "Tell me if you like/dislike another actor, type \"list\" to see a list of preferences, or \"return\" to go back."] ,state]
                 elif output[0]["text"] == "ACTORDISLIKE":
                     for word in response["output"]["entities"]:
                         if word.get("entity")=="actornames":
@@ -382,7 +377,6 @@ def assistant(inputValue, storage):
 
     elif state == "CONFIRM":
         if inputValue=="Y" or inputValue == "y":
-            storage.addHistory(storage.getChosenMovie())
             return [["OK! Have fun watching " + storage.getChosenMovie() + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:

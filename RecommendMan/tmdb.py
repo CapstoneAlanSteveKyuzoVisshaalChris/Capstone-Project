@@ -4,7 +4,8 @@ import json
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
-#inputValue = 'crime movie with cool car chase and nice soundtrack'
+
+# inputValue = 'crime movie with cool car chase and nice soundtrack'
 
 
 def tmdb(inputValue):
@@ -32,26 +33,23 @@ def tmdb(inputValue):
     ).get_result()
 
     ass_response = response["output"]["generic"][0]["text"]
-    #response codes:
-    #1: will return movie
-    #2: no keywords found
-    #3: no genre/did not understand
+    # response codes:
+    # 1: will return movie
+    # 2: no keywords found
+    # 3: no genre/did not understand
 
-
-    if (ass_response == "2"):
+    if ass_response == "2":
         response = assistant.delete_session(
-        assistant_id=ass_id,
-        session_id=sess_id
+            assistant_id=ass_id,
+            session_id=sess_id
         ).get_result()
-        return ("Please include some keywords to narrow the search.")
-    elif (ass_response == "3"):
+        return "Please include some keywords to narrow the search."
+    elif ass_response == "3":
         response = assistant.delete_session(
-        assistant_id=ass_id,
-        session_id=sess_id
+            assistant_id=ass_id,
+            session_id=sess_id
         ).get_result()
-        return ("You need a genre and some keywords to search.")
-    
-
+        return "You need a genre and some keywords to search."
 
     json_str = json.dumps(response, indent=2)
     # SIZE
@@ -59,26 +57,24 @@ def tmdb(inputValue):
     # print(size)
     # print(response["output"]["entities"])
     # GENRE
-    genre=""
+    genre = ""
     for word in response["output"]["entities"]:
-        if word.get("entity")=="genre":
-           genre = word.get("value")
-           break
+        if word.get("entity") == "genre":
+            genre = word.get("value")
+            break
     # KEYWORD
     keywords = []
     i = 1
     for word in response["output"]["entities"]:
-        if word.get("entity")=="keywords":
-           keywords.append(word.get("value"))
+        if word.get("entity") == "keywords":
+            keywords.append(word.get("value"))
 
-    #TIME
+    # TIME
     time = ""
     for word in response["output"]["entities"]:
-        if word.get("entity")=="times":
-               time = (word.get("value"))
-               break
-
-
+        if word.get("entity") == "times":
+            time = (word.get("value"))
+            break
 
     response = assistant.delete_session(
         assistant_id=ass_id,
@@ -96,11 +92,11 @@ def tmdb(inputValue):
             search = url + name
             return requests.get(search).json()
 
-        def searchGenre(self,genre):
+        def searchGenre(self, genre):
             url = 'https://api.themoviedb.org/3/genre/movie/list?api_key=' + self.key + '&query='
-            #print("genre: '", genre, "'")
+            # print("genre: '", genre, "'")
             if ' ' in genre:
-                genre.replace(' ','%20')
+                genre.replace(' ', '%20')
             genre = genre.capitalize()
             search = url + genre
             req = requests.get(search).json()
@@ -109,18 +105,16 @@ def tmdb(inputValue):
             while i < len(req["genres"]):
                 if req["genres"][i].get("name") == genre:
                     id = req["genres"][i].get("id")
-                i+=1
+                i += 1
             return id
-        
-        #gets person name from tmdb using search func and return the json output
+
+        # gets person name from tmdb using search func and return the json output
         def searchPerson(self, person):
             url = 'https://api.themoviedb.org/3/search/people?api_key=' + self.key + '&query='
             if ' ' in person:
-                person.replace(' ','%20')
+                person.replace(' ', '%20')
             search = url + person
             return requests.get(search).json()
-
-
 
         def searchKeyword(self, keyword):
             url = 'https://api.themoviedb.org/3/search/keyword?api_key=' + self.key + '&query='
@@ -131,48 +125,49 @@ def tmdb(inputValue):
 
         def parseTimes(self, movieList, time):
             list = []
-            if (movieList.get("total_results")!=0):
+            if movieList.get("total_results") != 0:
                 list = movieList['results']
                 temp = []
                 while list:
                     mv = list.pop()
                     release = mv["release_date"][0:4]
-                    if (((time == "new") and (int(release) > 2010)) or ((time == "old") and (int(release) < 1985)) or (time == "")):
-                            temp.append(mv)
+                    if (((time == "new") and (int(release) > 2010)) or ((time == "old") and (int(release) < 1985)) or (
+                            time == "")):
+                        temp.append(mv)
                 while temp:
                     list.append(temp.pop())
             return list
 
-        def discover(self,genreID,keywordID):
+        def discover(self, genreID, keywordID):
             url = 'https://api.themoviedb.org/3/discover/movie?api_key=' + self.key + '&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres='
             if ' ' in keywordID:
-                keywordID.replace(' ','%2C')
+                keywordID.replace(' ', '%2C')
             search = url + genreID
-            search = search + "&with_keywords=" + keywordID + "&without_keywords=9663" #remove sequels
+            search = search + "&with_keywords=" + keywordID + "&without_keywords=9663"  # remove sequels
             return requests.get(search).json()
 
-        def simpleSearch(self,genre,keyword):
-            title="NO MOVIE FOUND"
+        def simpleSearch(self, genre, keyword):
+            title = "NO MOVIE FOUND"
             keyWordID = ""
-            genreID=""
+            genreID = ""
             personID = ""
-            genreID+=str(self.searchGenre(genre))
+            genreID += str(self.searchGenre(genre))
             for y in keyword:
                 key = self.searchKeyword(y)
                 res = key['results']
                 id = 0
                 for x in res:
-                    #compare case insensitive
+                    # compare case insensitive
                     if x['name'].casefold() == y.casefold():
                         id = x['id']
-                        #print("keyword: ", y)
-                        #print("keywordID: ", id)
+                        # print("keyword: ", y)
+                        # print("keywordID: ", id)
                         keyWordID += str(id) + ","
 
-            movieList = self.discover(genreID,keyWordID)
+            movieList = self.discover(genreID, keyWordID)
             list = self.parseTimes(movieList, time)
-            if (movieList.get("total_results")!=0):
-                if (len(list) > 0):
+            if movieList.get("total_results") != 0:
+                if len(list) > 0:
                     title = list[0]['title']
 
             return title

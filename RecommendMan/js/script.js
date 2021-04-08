@@ -39,6 +39,28 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:";
 }
 
+function clear_his(){
+    document.getElementById('chat-wrapper').innerHTML = '';
+}
+
+function show_actor(){
+    if(ws){
+             ws.send("list");
+        }
+         ws.onmessage=function(evt){
+             console.log("fdsa");
+             isUrl = isValidHttpUrl(evt.data)
+             if (isUrl) {
+                 //var img = new Image();
+                 document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box" style="width:310px;height:390px;"><img src="' + evt.data + '" style="width:230px;height:370px;"></div><span>' + date + '</span></div></div>';
+             }
+             else {
+                 document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">' + evt.data + '</div><span>' + date + '</span></div></div>';
+             }
+             messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+        };
+}
+
 function changeBot(id){
     var date = new Date();
     switch(id){
@@ -47,6 +69,7 @@ function changeBot(id){
             document.getElementById("actorBot").className = "chat-list-item";
             document.getElementById("preferBot").className = "chat-list-item";
             document.getElementById("profileImage").src = "img/1.jpg";
+            document.getElementById("rightProfileImage").src = "img/1.jpg";
             document.getElementById("botName").textContent = "Movie Recommend-Man";
             document.getElementById("botInstruction").textContent = "Movie Recommend-Man Introduction";
             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">'+"Welcome! I am Movie Recommend-Man! I can recommend you movies based on your input!"+'</div><span>'+date+'</span></div></div>';
@@ -56,6 +79,7 @@ function changeBot(id){
             document.getElementById("actorBot").className = "chat-list-item active";
             document.getElementById("preferBot").className = "chat-list-item";
             document.getElementById("profileImage").src = "img/2.jpg";
+            document.getElementById("rightProfileImage").src = "img/2.jpg";
             document.getElementById("botName").textContent = "Actor Recommend-Man";
             document.getElementById("botInstruction").textContent = "Actor Recommend-Man Introduction";
             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">'+"Welcome! I am Actor Recommend-Man! I can recommend you actors based on your input!"+'</div><span>'+date+'</span></div></div>';
@@ -65,6 +89,7 @@ function changeBot(id){
             document.getElementById("actorBot").className = "chat-list-item";
             document.getElementById("preferBot").className = "chat-list-item active";
             document.getElementById("profileImage").src = "img/3.jpg";
+            document.getElementById("rightProfileImage").src = "img/3.jpg";
             document.getElementById("botName").textContent = "Preference Manager";
             document.getElementById("botInstruction").textContent = "Preference Manager Introduction";
             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">'+"Welcome! I am your preference manager! I can help you to modify your preferences!"+'</div><span>'+date+'</span></div></div>';
@@ -84,3 +109,4 @@ themeColors.forEach(themeColor => {
     document.body.setAttribute('data-theme', theme);
     themeColor.classList.add('active');
   });});
+

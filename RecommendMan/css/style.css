@@ -536,7 +536,7 @@ body[data-theme=dark] {
 .archive-btn {
   color: #fff;
   height: 32px;
-  margin-top: 16px;
+  margin-bottom: 20px;
   border-radius: 4px;
   background-color: var(--button-bg);
   display: flex;
@@ -545,7 +545,7 @@ body[data-theme=dark] {
   border: none;
 }
 .archive-btn svg {
-  margin-left: 6px;
+  margin-left: 0px;
 }
 
 .app-activity-box {
@@ -611,13 +611,15 @@ body[data-theme=dark] {
   height: 16px;
 }
 
-.info-text-wrapper span {
+.info-text-wrapper span{
   display: block;
 }
 
-.info-text-upper {
+.info-text-upper{
   font-size: 14px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
 }
 
 .info-text-bottom {
@@ -705,16 +707,7 @@ body[data-theme=dark] {
   margin-top: auto;
   padding-bottom: 10px;
 }
-.app-theme-changer{
-  position: fixed;
-  top: 0;
-  z-index: 1;
-  background-color: var(--app-bg);
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: auto;
-  padding-top: 10px;
-}
+
 .app-theme-selector {
   background-color: var(--box-color);
   box-shadow: var(--box-shadow);
