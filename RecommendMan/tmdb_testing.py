@@ -2,10 +2,10 @@ import requests
 import json
 import storage
 import statelist
+import difflib
 
 from ibm_watson import AssistantV2
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-
 
 ###Return a list: the string to output, and the state
 retpack = ["returnstmt", "statestring"]
@@ -162,10 +162,13 @@ def assistant(inputValue, storage):
 
             #get cast of movies, exclude any with actors u dont like
             #print("lis" + recommendList)
-            print(recommendList[0]["id"])
+            #print("RL", recommendList)
+            #print(recommendList[0]["id"])
+            if(recommendList):
+                print(recommendList[0]["id"])
             for movie in recommendList:
                 cast = requests.get("https://api.themoviedb.org/3/movie/" + str(movie["id"]) + "/credits?api_key=6ca5bdeac62d09b1186aa4b0fd678720&language=en-US").json()
-                #print(cast)
+                #print(movie)
                 minsize = 10
                 castsize = len(cast["cast"])
                 if castsize < 10:
@@ -177,12 +180,46 @@ def assistant(inputValue, storage):
 
 
             storage.updateRecommends(recommendList)
-
+            print(recommendList)
             return recommendList
         
     #test = Tmdb("")
     #print(test.advancedSearch(genre,keywords,likesActor))
 
+    def splitter(s):
+        slen = len(s)
+        i = 0
+        phrases = 0
+        current = ""
+        ch = ""
+        sep = []
+        while (i < slen):
+          ch = s[i]
+          if phrases == 0 :
+            if (ch == "/"):
+              i -=1
+              phrases = 1
+            else:  
+              if (ch != " "):
+                current = current + str(ch)
+              else:
+                if current != " " and len(current) != 0:
+                  sep.append(current)
+                current = ""
+          if phrases == 1:
+            if ch != "/":
+              current = current + str(ch)
+            else:
+              if current != " " and len(current) != 0:
+                phrases = 0
+                sep.append(current)
+              current = ""
+          i+=1
+        sep.append(current)
+        for a in sep: 
+          if a.isspace() or len(a) == 0:
+            sep.remove(a)
+        return sep
 
     ###startup
     authenticator = IAMAuthenticator('Urysw6Zb3FD5CDASMUiyZEnmcctbDIuPpFUdyTCH3KrL')
@@ -197,6 +234,8 @@ def assistant(inputValue, storage):
     startstate = statelist.startState()
     searchstate = '0'
     state = storage.getState()
+
+    inp_arr = splitter(inputValue)
 
     #likesActor = []
     #dislikesActor = []
@@ -237,7 +276,8 @@ def assistant(inputValue, storage):
                 json_str = json.dumps(response, indent=2)
                 #SIZE
                 size = len(response["output"]["entities"])
-                #print(response["output"]["entities"])
+                print(response)
+                print(response["output"]["entities"])
                 #GENRE
                 genre=""
                 for word in response["output"]["entities"]:
@@ -246,9 +286,16 @@ def assistant(inputValue, storage):
                             break
                 #KEYWORD
                 keywords = []
+                keywordscand = []
                 for word in response["output"]["entities"]:
                     if word.get("entity")=="keywords":
-                            keywords.append(word.get("value"))
+                            keywordscand.append(word.get("value"))
+                for w in inp_arr:
+                    close = difflib.get_close_matches(w, keywordscand)
+                    if len(close) > 0:
+                        keywords.append(close[0])
+                print(keywordscand)
+                print(keywords)
                 #TIME
                 time = ""
                 for word in response["output"]["entities"]:
@@ -258,12 +305,22 @@ def assistant(inputValue, storage):
 
 
                 test = Tmdb("6ca5bdeac62d09b1186aa4b0fd678720")
+                #print("genre", genre)
+                print("kiwi", keywords)
                 #print(test.simpleSearch(genre,keywords))
                 state=statelist.searchState()
                 #print("THIS IS THE HOME NODE")
-                title = test.advancedSearch(genre,keywords)[0]["title"]
-                storage.popRecommends()
-                return([title + "  -" + "Do you want this movie? [Y/N]","CONFIRM"])
+                movieList = test.advancedSearch(genre,keywords)
+                print("MOVIELIST")
+                print(movieList)
+                if len(movieList) != 0:
+                    title = movieList[0]["title"]
+                    overview = movieList[0]["overview"]
+                    poster = "https://www.themoviedb.org/t/p/original" + movieList[0]["poster_path"]
+                    storage.popRecommends()
+                    return[[poster, "'" + title + "' ~~~~~ Here is an overview: " + overview , "\nDo you want this movie?\t- [Y/N]"],"CONFIRM"]
+                else:
+                    return[["Sorry, there are no movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
             else:
                 state = response["context"]["skills"]["main skill"]["system"]["state"]
                 if output[0]["text"] == "ACTORLIKE":
@@ -320,14 +377,17 @@ def assistant(inputValue, storage):
 
     elif state == "CONFIRM":
         if inputValue=="Y" or inputValue == "y":
-            return [[("OK! Have fun watching " + storage.getRecommends()[0]["title"] + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
+            return [["OK! Have fun watching " + storage.getChosenMovie() + "!", "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
         elif inputValue=="N" or inputValue == "n":
             if len(storage.getRecommends()) > 0:
                 title = storage.getRecommends()[0]["title"]
+                overview = storage.getRecommends()[0]["overview"]
+                poster = "https://www.themoviedb.org/t/p/original" + storage.getRecommends()[0]["poster_path"]
                 storage.popRecommends()
-                return [("How about this one: " + title + " - [Y/N]"), "CONFIRM"]
+                storage.setChosenMovie(title)
+                return [[poster, "'" + title + "' ~~~~~ Here is an overview: " + overview , "\nHow about this one?\t- [Y/N]"], "CONFIRM"]
             else:
-                return[[("Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?")], statelist.startState()]
+                return[["Sorry, there are no more movies that fit your query :(" , "Are you looking for a movie recommendation, trying to update your movie preferences, or trying to learn more about Recommend-Man?"], statelist.startState()]
 
 
     #usertext = input("YOUR INPUT HERE: ")

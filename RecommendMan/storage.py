@@ -2,11 +2,15 @@ class Storage:
 
     def __init__(self):
         self.state = 'eyJzZXNzaW9uX2lkIjoiNjc3OGFmYzUtNjExYi00ODQzLWIxMTgtMWRjNjMzZWZiMDg3Iiwic2tpbGxfcmVmZXJlbmNlIjoibWFpbiBza2lsbCIsImFzc2lzdGFudF9pZCI6IjIxMjBkNGI0LTVkMjEtNDg4MC05ODFjLTI0NTQzNmM3ZTEyZiIsImluaXRpYWxpemVkIjp0cnVlLCJkaWFsb2dfc3RhY2siOlt7ImRpYWxvZ19ub2RlIjoiV2VsY29tZSJ9XSwiX25vZGVfb3V0cHV0X21hcCI6eyJXZWxjb21lIjp7IjAiOlswLDBdfX0sImxhc3RfYnJhbmNoX25vZGUiOiJXZWxjb21lIn0='
+        self.title = ""
+        self.history = []
+        self.chosenMovie = ''
         self.likesActor = []
         self.dislikesActor = []
         self.likesGenre = []
         self.dislikesGenre =[]
         self.recommends = []
+        self.current = ""
 
     def update(self, st):
             self.state = st
@@ -20,6 +24,16 @@ class Storage:
         return self.recommends
     def popRecommends(self):
         self.recommends.pop(0)
+
+    def addHistory(self, movie):
+        self.history.append(movie)
+            
+    def getHistory(self):
+        return self.history
+    def setChosenMovie(self, title):
+        self.chosenMovie = title
+    def getChosenMovie(self):
+        return self.chosenMovie
 
 
     def addLikesActor(self, actor):

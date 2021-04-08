@@ -10,7 +10,14 @@ function send(){
         }
          ws.onmessage=function(evt){
              console.log("fdsa");
-             document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">'+evt.data +'</div><span>'+date+'</span></div></div>';
+             isUrl = isValidHttpUrl(evt.data)
+             if (isUrl) {
+                 //var img = new Image();
+                 document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box" style="width:310px;height:390px;"><img src="' + evt.data + '" style="width:230px;height:370px;"></div><span>' + date + '</span></div></div>';
+             }
+             else {
+                 document.getElementById('chat-wrapper').innerHTML += '<div class="message-wrapper"><div class="message-box-wrapper"><div class="message-box">' + evt.data + '</div><span>' + date + '</span></div></div>';
+             }
              messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
         };
     }else{
@@ -18,6 +25,18 @@ function send(){
     }
     document.getElementById("chat-input").value = "";
     messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+}
+
+function isValidHttpUrl(string) {
+    let url;
+
+    try {
+        url = new URL(string);
+    } catch (_) {
+        return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
 }
 
 function changeBot(id){

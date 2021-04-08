@@ -19,18 +19,6 @@ def index():
     
     # "Log in" the user
     user = request.json['username'] 
-
-    # "is Raw text input?"
-    raw = False
-    try:
-        raw = request.json['raw']
-    except Exception:
-        raw = True
-
-    # If raw, extract keyword updates
-    if raw:
-        #TODO: STILL IN BETA, WILL ADD FOR TB4
-        pass
     
     # Get list of new preferences
     prefs_new = request.json['pref_data']
