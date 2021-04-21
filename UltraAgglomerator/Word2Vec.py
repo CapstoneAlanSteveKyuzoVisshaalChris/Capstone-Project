@@ -18,7 +18,7 @@ def index():
     # Expand keywords
     keywords_expanded = {}
     for keyword in keywords:
-        keywords_expanded[keyword] = related_words(keyword, 5)
+        keywords_expanded[keyword] = related_words(keyword, 10)
     
     # Return expanded list of keywords
     return json.jsonify(keywords_expanded)

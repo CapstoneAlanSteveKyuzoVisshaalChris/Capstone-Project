@@ -9,8 +9,10 @@ def related_words(given, n):
             word = values[0]
             vector = np.asarray(values[1:], "float32")
             embeddings_dict[word] = vector
-    
-    return sorted(embeddings_dict.keys(), key=lambda word: euclidean(embeddings_dict[word], embeddings_dict[given]))[:n]
+    if given in embeddings_dict.keys():
+        return sorted(embeddings_dict.keys(), key=lambda word: euclidean(embeddings_dict[word], embeddings_dict[given]))[:n]
+    else:
+        return "No Matches"
 
 ##### "SciPy.Spatial.Distance" #####
 
