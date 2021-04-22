@@ -5,6 +5,8 @@ import base64
 import threading
 import tmdb
 import tmdb_testing
+import dating
+import girls
 import storage
 import time
 
@@ -102,7 +104,8 @@ def handler_msg(conn):
 
             if data_recv[0:1] == b"\x81":
                 data_parse = parse_payload(data_recv)
-                retlist = tmdb_testing.assistant(data_parse, st)
+                #changed from tmdb_testing to dating
+                retlist = dating.assistant(data_parse, st)
                 output = retlist[0]
                 st.update(retlist[1])
                 # print(output)
