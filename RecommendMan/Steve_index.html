@@ -27,7 +27,7 @@
         <div class="app-profile-box">
             <img id="profileImage" src="img/1.jpg" alt="profile">
             <div id="botName" class="app-profile-box-name">
-                Movie Recommend-Man
+                Date Recommend-Man
             </div>
 
         </div>
@@ -36,13 +36,14 @@
             <ul id="botList" class="chat-list active">
                 <li id="movieBot" class="chat-list-item active" onclick=changeBot(this.id)>
                     <img src="img/1.jpg" alt="chat">
-                    <span class="chat-list-name">Movie Recommend-Man</span>
+                    <span class="chat-list-name">Date Recommend-Man</span>
                 </li>
-
+                <!--
                 <li id="actorBot" class="chat-list-item" onclick=quickie()>
                     <img src="img/2.jpg" alt="chat">
                     <span class="chat-list-name">QUICK RECOMMEND</span>
                 </li>
+                -->
                 <!--
                 <li id="preferBot" class="chat-list-item" onclick=changeBot(this.id)>
                 <img src="img/3.jpg" alt="chat">
@@ -57,15 +58,15 @@
             <div class="message-wrapper">
                 <div id="bot-chat" class="message-box-wrapper">
                     <div class="message-box">
-                        Welcome! I am Recommend-Man! I can recommend you movies based on your input!
+                        Welcome! I am Recommend-Man! I can recommend you dates based on your input!
                     </div>
                     <span id="date1"></span>
                     <script>
                         document.getElementById("date1").innerHTML = Date();
                     </script>
                     <div class="message-box">
-                        Are you looking for a movie recommendation, trying to update your movie preferences, or trying
-                        to learn more about Recommend-Man?
+                        Are you looking for a date recommendation, or trying to learn more about Recommend-Man?
+
                     </div>
                     <span id="date2"></span>
                     <script>
@@ -95,7 +96,7 @@
     <div class="app-right">
         <div class="app-profile-box">
             <img id="rightProfileImage" src="img/1.jpg">
-            <p id="botInstruction" class="app-profile-box-title name">"Hi! I am your movie Recommend-Man, for now I will do all the recommendation for you! Including recommending actors and manage your preferences. Later, my brothers Actor Recommend-Man and Preference Manager will come and help you together!"</p></button>
+            <p id="botInstruction" class="app-profile-box-title name">"Hi! I am your date Recommend-Man, for now I will do all the recommendation for you! I'm related to the movie recommend-man!"</p></button>
         </div>
         <div class="app-activity-box">
             <button id="clear_btn" class="archive-btn" onclick="clear_his()">
@@ -192,3 +193,17 @@
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
 </body>
 </html>
+
+<script>
+    window.watsonAssistantChatOptions = {
+        integrationID: "66ae75c8-6060-4da8-a2ef-0581f3a4dc99", // The ID of this integration.
+        region: "us-south", // The region your integration is hosted in.
+        serviceInstanceID: "869e006a-37b4-4e08-9d1c-2d2994cc3234", // The ID of your service instance.
+        onLoad: function (instance) { instance.render(); }
+    };
+    setTimeout(function () {
+        const t = document.createElement('script');
+        t.src = "https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
+        document.head.appendChild(t);
+    });
+</script>
